@@ -8,6 +8,7 @@ import onepick.kanban.card.dto.CardResponseDto;
 import onepick.kanban.card.entity.Card;
 import onepick.kanban.card.repository.CardAttachmentRepository;
 import onepick.kanban.card.repository.CardRepository;
+import onepick.kanban.common.SlackNotifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class CardService {
     private final CardRepository cardRepository;
     private final CardAttachmentRepository cardAttachmentRepository;
     private final BoardListRepository boardListRepository;
+    private final SlackNotifier slackNotifier;
 
     public CardResponseDto createCard(Long boardListId, CardRequestDto requestDto) {
 
@@ -28,6 +30,9 @@ public class CardService {
 
         Card card = new Card(boardList, null, requestDto.getTitle(), requestDto.getContents(), requestDto.getDeadline());
         card = cardRepository.save(card);
+
+        String message = boardList.getTitle() + " 리스트의 " + card.getTitle() + " 카드가 생성되었습니다.";
+        slackNotifier.sendNotification(message);
 
         return new CardResponseDto(card.getId(), card.getTitle(), card.getContents(), card.getDeadline());
     }

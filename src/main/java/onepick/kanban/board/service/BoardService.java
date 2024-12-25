@@ -5,6 +5,7 @@ import onepick.kanban.board.dto.BoardRequestDto;
 import onepick.kanban.board.dto.BoardResponseDto;
 import onepick.kanban.board.entity.Board;
 import onepick.kanban.board.repository.BoardRepository;
+import onepick.kanban.common.SlackNotifier;
 import onepick.kanban.workspace.entity.Workspace;
 import onepick.kanban.workspace.repository.WorkspaceRepository;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final WorkspaceRepository workspaceRepository;
+    private final SlackNotifier slackNotifier;
 
     public BoardResponseDto createBoard(Long workspaceId, BoardRequestDto requestDto) {
 
@@ -27,6 +29,9 @@ public class BoardService {
 
         Board board = new Board(workspace, requestDto.getTitle(), requestDto.getBackgroundColor(), requestDto.getBackgroundImage());
         board = boardRepository.save(board);
+
+        String message = board.getWorkspace().getTitle() + " 워크스페이스의 " + board.getTitle() + " 보드가 생성되었습니다.";
+        slackNotifier.sendNotification(message);
 
         return new BoardResponseDto(board.getId(), board.getTitle(), board.getBackgroundColor(), board.getBackgroundImage(), null);
         }
