@@ -26,7 +26,7 @@ public class BoardService {
             throw new IllegalArgumentException("유효하지 않은 워크스페이스 사용자입니다.");
         }
 
-        Workspace workspace = new Workspace(workspaceId, "One Pick");
+        Workspace workspace = new Workspace(workspaceId, "One Pick", "One Pick Content");
         Board board = new Board(workspace, title, backgroundColor, backgroundImage);
         board = boardRepository.save(board);
 
@@ -55,4 +55,8 @@ public class BoardService {
         return new BoardResponseDto(savedBoard.getId(), savedBoard.getTitle(), savedBoard.getBackgroundColor(), savedBoard.getBackgroundImage(), null);
     }
 
+    public void deleteBoard(Long boardId) {
+        Board board = boardRepository.findByBoardId(boardId).orElseThrow(() -> new NoSuchElementException("보드를 찾을 수 없습니다."));
+        boardRepository.delete(board);
+    }
 }

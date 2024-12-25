@@ -6,6 +6,7 @@ import onepick.kanban.board.dto.BoardResponseDto;
 import onepick.kanban.board.service.BoardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,4 +48,10 @@ public class BoardController {
         return ResponseEntity.ok(board);
     }
 
+    // 보드 삭제
+    @DeleteMapping
+    public ResponseEntity<BoardResponseDto> deleteBoard(@PathVariable Long boardId) {
+        boardService.deleteBoard(boardId);
+        return ResponseEntity.noContent().build();
+    }
 }
