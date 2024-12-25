@@ -41,10 +41,10 @@ public class BoardService {
     }
 
     public BoardResponseDto updateBoard(Long boardId, BoardRequestDto requestDto) {
-        Board board = boardRepository.findBoardById(boardId)
+        Board board = boardRepository.findByBoardId(boardId)
                 .orElseThrow(() -> new NoSuchElementException("보드를 찾을 수 없습니다."));
 
-        board.updatedBoard(
+        board.updateBoard(
                 requestDto.getTitle() != null ? requestDto.getTitle() : board.getTitle(),
                 requestDto.getBackgroundColor() != null ? requestDto.getBackgroundColor() : board.getBackgroundColor(),
                 requestDto.getBackgroundImage() != null ? requestDto.getBackgroundImage() : board.getBackgroundImage()
