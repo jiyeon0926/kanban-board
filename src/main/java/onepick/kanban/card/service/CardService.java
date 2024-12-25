@@ -55,4 +55,10 @@ public class CardService {
 
         return new CardResponseDto(savedCard.getId(), savedCard.getTitle(), savedCard.getContents(), savedCard.getDeadline());
     }
+
+    public void deleteCard(Long cardId) {
+        Card card = cardRepository.findByCardId(cardId)
+                .orElseThrow(() -> new NoSuchElementException("카드를 찾을 수 없습니다."));
+        cardRepository.delete(card);
+    }
 }

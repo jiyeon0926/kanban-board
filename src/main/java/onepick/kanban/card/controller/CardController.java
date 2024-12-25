@@ -8,6 +8,7 @@ import onepick.kanban.card.repository.CardRepository;
 import onepick.kanban.card.service.CardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,5 +48,12 @@ public class CardController {
     public ResponseEntity<CardResponseDto> updateCard(@PathVariable Long cardId, @RequestBody CardRequestDto requestDto) {
         CardResponseDto card = cardService.updateCard(cardId, requestDto);
         return ResponseEntity.ok(card);
+    }
+
+    // 카드 삭제
+    @DeleteMapping("/{cardId}")
+    public ResponseEntity<Void> deleteCard(@PathVariable Long cardId) {
+        cardService.deleteCard(cardId);
+        return ResponseEntity.noContent().build();
     }
 }
