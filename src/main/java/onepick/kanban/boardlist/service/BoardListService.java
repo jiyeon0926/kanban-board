@@ -1,5 +1,6 @@
 package onepick.kanban.boardlist.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import onepick.kanban.board.entity.Board;
 import onepick.kanban.board.repository.BoardRepository;
@@ -8,6 +9,8 @@ import onepick.kanban.boardlist.dto.BoardListResponseDto;
 import onepick.kanban.boardlist.entity.BoardList;
 import onepick.kanban.boardlist.repository.BoardListRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -30,4 +33,11 @@ public class BoardListService {
         boardList.update(requestDto.getTitle(), requestDto.getOrder());
         return new BoardListResponseDto(boardListRepository.save(boardList));
     }
+
+    // 리스트 순서 변경 미완성
+    public void updateListOrder(Long boardId, Map<Long, Integer> listOrderMap) {
+        listOrderMap.forEach((listId, newOrder) -> {
+        });
+    }
+
 }
