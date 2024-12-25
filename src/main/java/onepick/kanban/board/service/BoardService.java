@@ -27,6 +27,7 @@ public class BoardService {
 
         Board board = new Board(workspace, requestDto.getTitle(), requestDto.getBackgroundColor(), requestDto.getBackgroundImage());
         board = boardRepository.save(board);
+
         return new BoardResponseDto(board.getId(), board.getTitle(), board.getBackgroundColor(), board.getBackgroundImage(), null);
         }
 
