@@ -12,9 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class BoardRequestDto {
 
-    private Long id;
     private String title;
     private String backgroundColor;
     private String backgroundImage;
-    private List<BoardListResponseDto> boardList;
 }
