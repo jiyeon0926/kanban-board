@@ -2,6 +2,7 @@ package onepick.kanban.workspace.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import onepick.kanban.common.SlackNotifier;
 import onepick.kanban.workspace.dto.WorkspaceRequestDto;
 import onepick.kanban.workspace.dto.WorkspaceResponseDto;
 import onepick.kanban.workspace.entity.Workspace;
@@ -16,11 +17,16 @@ import java.util.stream.Collectors;
 public class WorkspaceService {
 
     private final WorkspaceRepository workspaceRepository;
+    private final SlackNotifier slackNotifier;
 
     @Transactional
     public WorkspaceResponseDto createWorkspace(WorkspaceRequestDto requestDto) {
         Workspace workspace = new Workspace(requestDto.getTitle(), requestDto.getContents());
         workspaceRepository.save(workspace);
+
+        String message = workspace.getTitle() + " 워크스페이스가 생성되었습니다.";
+        slackNotifier.sendNotification(message);
+
         return new WorkspaceResponseDto(workspace.getId(), workspace.getTitle(), workspace.getContents());
     }
 
