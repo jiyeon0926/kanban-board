@@ -12,6 +12,7 @@ import onepick.kanban.common.SlackNotifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,5 +44,15 @@ public class CardService {
         return cards.stream()
                 .map(card -> new CardResponseDto(card.getId(), card.getTitle(), card.getContents(), card.getDeadline()))
                 .collect(Collectors.toList());
+    }
+
+    public CardResponseDto updateCard(Long cardId, CardRequestDto requestDto) {
+        Card card = cardRepository.findByCardId(cardId)
+                .orElseThrow(() -> new NoSuchElementException("카드를 찾을 수 없습니다."));
+
+        card.updateCard(requestDto.getTitle(), requestDto.getContents(), requestDto.getDeadline());
+        Card savedCard = cardRepository.save(card);
+
+        return new CardResponseDto(savedCard.getId(), savedCard.getTitle(), savedCard.getContents(), savedCard.getDeadline());
     }
 }
