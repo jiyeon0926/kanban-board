@@ -10,6 +10,9 @@ import onepick.kanban.card.repository.CardAttachmentRepository;
 import onepick.kanban.card.repository.CardRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CardService {
@@ -26,7 +29,14 @@ public class CardService {
         Card card = new Card(boardList, null, requestDto.getTitle(), requestDto.getContents(), requestDto.getDeadline());
         card = cardRepository.save(card);
 
-        return new CardResponseDto(card.getId(), card.getTitle(), card.getContents(), card.getDeadline(), null);
+        return new CardResponseDto(card.getId(), card.getTitle(), card.getContents(), card.getDeadline());
     }
 
+    public List<CardResponseDto> getCards(Long boardListId) {
+        List<Card> cards = cardRepository.findByBoardListId(boardListId);
+
+        return cards.stream()
+                .map(card -> new CardResponseDto(card.getId(), card.getTitle(), card.getContents(), card.getDeadline()))
+                .collect(Collectors.toList());
+    }
 }
