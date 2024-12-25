@@ -39,4 +39,16 @@ public class Board extends Timestamp {
         this.backgroundColor = backgroundColor;
         this.backgroundImage = backgroundImage;
     }
+
+    public void updateBoard(String title, String backgroundColor, String backgroundImage) {
+        if(title != null && !title.isEmpty()) {
+            this.title = title;
+        }
+        if(backgroundColor != null) {
+            this.backgroundColor = backgroundColor;
+        }
+        if(backgroundImage != null) {
+            this.backgroundImage = backgroundImage;
+        }
+    }
 }
