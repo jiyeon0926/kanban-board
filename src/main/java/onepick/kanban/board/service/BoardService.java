@@ -1,6 +1,7 @@
 package onepick.kanban.board.service;
 
 import lombok.RequiredArgsConstructor;
+import onepick.kanban.board.dto.BoardRequestDto;
 import onepick.kanban.board.dto.BoardResponseDto;
 import onepick.kanban.board.entity.Board;
 import onepick.kanban.board.repository.BoardRepository;
@@ -8,6 +9,7 @@ import onepick.kanban.workspace.entity.Workspace;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +38,21 @@ public class BoardService {
         return boards.stream()
                 .map(board -> new BoardResponseDto(board.getId(), board.getTitle(), board.getBackgroundColor(), board.getBackgroundImage(), null))
                 .collect(Collectors.toList());
+    }
+
+    public BoardResponseDto updateBoard(Long boardId, BoardRequestDto requestDto) {
+        Board board = boardRepository.findBoardById(boardId)
+                .orElseThrow(() -> new NoSuchElementException("보드를 찾을 수 없습니다."));
+
+        board.updatedBoard(
+                requestDto.getTitle() != null ? requestDto.getTitle() : board.getTitle(),
+                requestDto.getBackgroundColor() != null ? requestDto.getBackgroundColor() : board.getBackgroundColor(),
+                requestDto.getBackgroundImage() != null ? requestDto.getBackgroundImage() : board.getBackgroundImage()
+        );
+
+        Board savedBoard = boardRepository.save(board);
+
+        return new BoardResponseDto(savedBoard.getId(), savedBoard.getTitle(), savedBoard.getBackgroundColor(), savedBoard.getBackgroundImage(), null);
     }
 
 }
