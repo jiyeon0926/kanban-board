@@ -1,23 +1,20 @@
 package onepick.kanban.board.service;
 
 import lombok.RequiredArgsConstructor;
-import onepick.kanban.board.dto.BoardRequestDto;
 import onepick.kanban.board.dto.BoardResponseDto;
 import onepick.kanban.board.entity.Board;
 import onepick.kanban.board.repository.BoardRepository;
-import onepick.kanban.card.entity.CardAttachment;
-import onepick.kanban.card.repository.CardRepository;
 import onepick.kanban.workspace.entity.Workspace;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
-    private final CardRepository cardRepository;
 
     public BoardResponseDto createBoard(Long workspaceId, String title, String backgroundColor, String backgroundImage) {
         if (title == null || title.isEmpty()) {
@@ -33,4 +30,12 @@ public class BoardService {
 
         return new BoardResponseDto(board.getId(), board.getTitle(), board.getBackgroundColor(),board.getBackgroundImage(), null);
     }
+
+    public List<BoardResponseDto> getBoards(Long workspaceId) {
+        List<Board> boards = boardRepository.findByWorkspaceId(workspaceId);
+        return boards.stream()
+                .map(board -> new BoardResponseDto(board.getId(), board.getTitle(), board.getBackgroundColor(), board.getBackgroundImage(), null))
+                .collect(Collectors.toList());
+    }
+
 }
