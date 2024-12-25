@@ -1,12 +1,16 @@
 package onepick.kanban.board.controller;
 
 import lombok.RequiredArgsConstructor;
+import onepick.kanban.board.dto.BoardRequestDto;
 import onepick.kanban.board.dto.BoardResponseDto;
 import onepick.kanban.board.service.BoardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +38,13 @@ public class BoardController {
     public ResponseEntity<List<BoardResponseDto>> getBoards(@RequestParam Long workspaceId) {
         List<BoardResponseDto> boards = boardService.getBoards(workspaceId);
         return ResponseEntity.ok(boards);
+    }
+
+    // 보드 수정
+    @PutMapping
+    public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto requestDto) {
+        BoardResponseDto board = boardService.updateBoard(boardId, requestDto);
+        return ResponseEntity.ok(board);
     }
 
 }
