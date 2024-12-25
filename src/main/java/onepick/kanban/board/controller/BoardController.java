@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -27,30 +26,28 @@ public class BoardController {
 
     // 보드 생성
     @PostMapping
-    public ResponseEntity<BoardResponseDto> createBoard(@RequestParam Long workspaceId, @RequestParam String title,
-                                                        @RequestParam(required = false) String backgroundColor,
-                                                        @RequestParam(required = false) String backgroundImage) {
-        BoardResponseDto responseDto = boardService.createBoard(workspaceId, title, backgroundColor, backgroundImage);
+    public ResponseEntity<BoardResponseDto> createBoard(@PathVariable Long workspaceId, @RequestBody BoardRequestDto requestDto) {
+        BoardResponseDto responseDto = boardService.createBoard(workspaceId, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     // 보드 조회
     @GetMapping
-    public ResponseEntity<List<BoardResponseDto>> getBoards(@RequestParam Long workspaceId) {
+    public ResponseEntity<List<BoardResponseDto>> getBoards(@PathVariable Long workspaceId) {
         List<BoardResponseDto> boards = boardService.getBoards(workspaceId);
         return ResponseEntity.ok(boards);
     }
 
     // 보드 수정
-    @PutMapping
+    @PutMapping("/{boardId}")
     public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto requestDto) {
         BoardResponseDto board = boardService.updateBoard(boardId, requestDto);
         return ResponseEntity.ok(board);
     }
 
     // 보드 삭제
-    @DeleteMapping
-    public ResponseEntity<BoardResponseDto> deleteBoard(@PathVariable Long boardId) {
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId) {
         boardService.deleteBoard(boardId);
         return ResponseEntity.noContent().build();
     }

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import onepick.kanban.boardlist.dto.BoardListResponseDto;
-import onepick.kanban.card.dto.CardResponseDto;
 
 import java.util.List;
 
