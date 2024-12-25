@@ -40,4 +40,9 @@ public class BoardListService {
         });
     }
 
+    public void deleteList(Long listId) {
+        BoardList boardList = boardListRepository.findById(listId)
+                .orElseThrow(() -> new IllegalArgumentException("리스트를 찾을 수 없습니다."));
+        boardListRepository.delete(boardList);
+    }
 }

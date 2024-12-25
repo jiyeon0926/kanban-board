@@ -49,4 +49,10 @@ public class BoardListController {
         return ResponseEntity.ok("리스트 순서가 업데이트되었습니다.");
     }
 
+    // 리스트 삭제
+    @DeleteMapping("/{listId}")
+    public ResponseEntity<String> deleteList(@PathVariable Long listId) {
+        boardListService.deleteList(listId);
+        return ResponseEntity.ok("리스트가 삭제되었습니다.");
+    }
 }
