@@ -27,8 +27,8 @@ public class BoardController {
     // 보드 생성
     @PostMapping
     public ResponseEntity<BoardResponseDto> createBoard(@PathVariable Long workspaceId, @RequestBody BoardRequestDto requestDto) {
-        BoardResponseDto responseDto = boardService.createBoard(workspaceId, requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        BoardResponseDto board = boardService.createBoard(workspaceId, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(board);
     }
 
     // 보드 조회
