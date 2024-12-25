@@ -26,13 +26,13 @@ public class BoardController {
     private final BoardService boardService;
 
     // 보드 생성
-    @PostMapping
-    public ResponseEntity<BoardResponseDto> createBoard(@RequestParam Long workspaceId, @RequestParam String title,
-                                                        @RequestParam(required = false) String backgroundColor,
-                                                        @RequestParam(required = false) String backgroundImage) {
-        BoardResponseDto responseDto = boardService.createBoard(workspaceId, title, backgroundColor, backgroundImage);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-    }
+//    @PostMapping
+//    public ResponseEntity<BoardResponseDto> createBoard(@RequestParam Long workspaceId, @RequestParam String title,
+//                                                        @RequestParam(required = false) String backgroundColor,
+//                                                        @RequestParam(required = false) String backgroundImage) {
+//        BoardResponseDto responseDto = boardService.createBoard(workspaceId, title, backgroundColor, backgroundImage);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+//    }
 
     // 보드 조회
     @GetMapping

@@ -10,5 +10,6 @@ public class BoardListRequestDto {
     private String title;
 
     private String contents;
+    private Integer order;
 
 }

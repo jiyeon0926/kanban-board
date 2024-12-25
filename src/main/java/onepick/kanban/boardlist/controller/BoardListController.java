@@ -25,11 +25,14 @@ public class BoardListController {
     @PostMapping
     public ResponseEntity<BoardListResponseDto> createList(@PathVariable Long boardId,
                                                            @Valid @RequestBody BoardListRequestDto requestDto) {
-
         BoardListResponseDto boardListResponseDto = boardListService.createList(boardId, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(boardListResponseDto);
     }
 
-
-
+    @PutMapping("/{listId}")
+    public ResponseEntity<BoardListResponseDto> updateList(@PathVariable Long listId,
+                                                           @RequestBody BoardListRequestDto requestDto) {
+        BoardListResponseDto list = boardListService.updateList(listId, requestDto);
+        return ResponseEntity.ok(list);
+    }
 }

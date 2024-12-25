@@ -22,4 +22,12 @@ public class BoardListService {
         BoardList boardList = new BoardList(board, requestDto.getTitle(), requestDto.getContents());
         return new BoardListResponseDto(boardListRepository.save(boardList));
     }
+
+    public BoardListResponseDto updateList(Long listId, BoardListRequestDto requestDto) {
+        BoardList boardList = boardListRepository.findById(listId)
+                .orElseThrow(() -> new IllegalArgumentException("리스트를 찾을 수 없습니다."));
+
+        boardList.update(requestDto.getTitle(), requestDto.getOrder());
+        return new BoardListResponseDto(boardListRepository.save(boardList));
+    }
 }
