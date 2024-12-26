@@ -6,8 +6,10 @@ import onepick.kanban.card.dto.CardResponseDto;
 import onepick.kanban.card.entity.Card;
 import onepick.kanban.card.repository.CardRepository;
 import onepick.kanban.card.service.CardService;
+import onepick.kanban.user.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,12 +34,13 @@ public class CardController {
     @PostMapping
     public ResponseEntity<CardResponseDto> createCard(@PathVariable Long boardListId, @RequestBody CardRequestDto requestDto) {
         CardResponseDto card = cardService.createCard(boardListId, requestDto);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(card);
     }
 
     // 카드 상세 조회
     @GetMapping("/{cardId}")
-    public ResponseEntity<List<CardResponseDto>> getCards(@RequestParam Long boardListId) {
+    public ResponseEntity<List<CardResponseDto>> getCards(@PathVariable Long boardListId) {
         List<CardResponseDto> cards = cardService.getCards(boardListId);
 
         return ResponseEntity.ok(cards);
@@ -47,6 +50,7 @@ public class CardController {
     @PutMapping("/{cardId}")
     public ResponseEntity<CardResponseDto> updateCard(@PathVariable Long cardId, @RequestBody CardRequestDto requestDto) {
         CardResponseDto card = cardService.updateCard(cardId, requestDto);
+
         return ResponseEntity.ok(card);
     }
 
@@ -54,6 +58,7 @@ public class CardController {
     @DeleteMapping("/{cardId}")
     public ResponseEntity<Void> deleteCard(@PathVariable Long cardId) {
         cardService.deleteCard(cardId);
+
         return ResponseEntity.noContent().build();
     }
 }
