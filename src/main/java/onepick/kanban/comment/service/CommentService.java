@@ -6,6 +6,7 @@ import onepick.kanban.card.repository.CardRepository;
 import onepick.kanban.comment.dto.CommentRequestDto;
 import onepick.kanban.comment.entity.Comment;
 import onepick.kanban.comment.repository.CommentRepository;
+import onepick.kanban.common.SlackNotifier;
 import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
+    private final SlackNotifier slackNotifier;
 
     public Comment createComment(Long cardId, CommentRequestDto requestDto) {
         Card card = cardRepository.findById(cardId)
@@ -28,6 +30,10 @@ public class CommentService {
         Optional<User> user = userRepository.findById(card.getUser().getId());
 
         Comment comment = new Comment(card, user.get(), requestDto.getContents(), requestDto.getEmoji());
+
+        String message = comment.getUser().getName() + " 멤버가 " + comment.getCard().getTitle() + " 카드에 댓글을 남겼습니다.";
+        slackNotifier.sendNotification(message);
+
         return commentRepository.save(comment);
     }
 
