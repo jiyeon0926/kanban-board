@@ -1,8 +1,6 @@
 package onepick.kanban.user.service;
 
 import lombok.RequiredArgsConstructor;
-import onepick.kanban.jwt.JwtUtil;
-import onepick.kanban.user.dto.LoginRequestDto;
 import onepick.kanban.user.dto.UserRequestDto;
 import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
@@ -18,7 +16,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
 
     @Transactional
     public void signup(UserRequestDto userRequestDto) {
@@ -41,16 +38,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public String login(LoginRequestDto loginRequestDto) {
-        User user = userRepository.findByEmail(loginRequestDto.getEmail());
-
-        if (user == null || !passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 이메일 혹은 잘못된 비밀번호 입니다.");
-        }
-
-        String email = user.getEmail();
-        String role = user.getRole().getName();
-
-        return jwtUtil.createJwt("access", email, role);
+    public void login(String email, String password) {
+        // 사용자 정보가 올바른지 확인
+            // 1. DB find 메소드 정의해서 확인
+            // 2. authenticationManager.authenticate 활용
+        // 올바르면 로그인 처리
+        // 토큰 생성
+        // 토큰 리턴
     }
 }

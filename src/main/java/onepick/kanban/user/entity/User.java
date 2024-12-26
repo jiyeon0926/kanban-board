@@ -4,11 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import onepick.kanban.common.Timestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.Collection;
-import java.util.Collections;
 
 @Entity
 @Getter
@@ -43,9 +38,5 @@ public class User extends Timestamp {
 
     public void updateIsDeleted() {
         this.isDeleted = true;
-    }
-
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(role.getName()));
     }
 }
