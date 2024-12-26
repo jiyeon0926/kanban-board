@@ -35,11 +35,7 @@ public class UserController {
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
-        String accessToken = userService.login(loginRequestDto);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .header("Authorization", "Bearer " + accessToken)
-                .body("로그인을 하였습니다.");
+        return ResponseEntity.status(HttpStatus.OK).body(userService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword()));
     }
 
     // 로그아웃
