@@ -27,9 +27,12 @@ public class Comment extends Timestamp {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Comment(Card card, User user, String contents) {
+    private String emoji;
+
+    public Comment(Card card, User user, String contents, String emoji) {
         this.card = card;
         this.user = user;
         this.contents = contents;
+        this.emoji = emoji;
     }
 }
