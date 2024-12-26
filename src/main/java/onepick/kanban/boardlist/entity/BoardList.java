@@ -43,4 +43,8 @@ public class BoardList extends Timestamp {
         this.title = title;
         this.sequence = sequence;
     }
+
+    public void addSequence() {
+        this.sequence++;
+    }
 }

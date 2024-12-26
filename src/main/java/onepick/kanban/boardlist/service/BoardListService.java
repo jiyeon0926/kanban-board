@@ -6,11 +6,14 @@ import onepick.kanban.board.entity.Board;
 import onepick.kanban.board.repository.BoardRepository;
 import onepick.kanban.boardlist.dto.BoardListRequestDto;
 import onepick.kanban.boardlist.dto.BoardListResponseDto;
+import onepick.kanban.boardlist.dto.UpdateBoardListRequestDto;
 import onepick.kanban.boardlist.entity.BoardList;
 import onepick.kanban.boardlist.repository.BoardListRepository;
 import onepick.kanban.common.SlackNotifier;
 import org.springframework.stereotype.Service;
 
+import javax.sound.midi.Sequence;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -40,10 +43,23 @@ public class BoardListService {
         return new BoardListResponseDto(boardListRepository.save(boardList));
     }
 
-    // 리스트 순서 변경 미완성
-    public void updateListOrder(Long boardId, Map<Long, Integer> listOrderMap) {
-        listOrderMap.forEach((listId, newOrder) -> {
-        });
+    @Transactional
+    public void updateListOrder(Long boardId, UpdateBoardListRequestDto dto) {
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("보드를 찾을 수 없습니다."));
+
+        List<BoardList> boardList = board.getBoardLists();
+
+        for (BoardList list : boardList) {
+            if (list.getId() == dto.getListId()) {
+                list.update(list.getTitle(), dto.getOrder());
+            } else if (list.getSequence() < dto.getOrder())
+                continue;
+            else {
+                list.addSequence();
+            }
+        }
     }
 
     public void deleteList(Long listId) {

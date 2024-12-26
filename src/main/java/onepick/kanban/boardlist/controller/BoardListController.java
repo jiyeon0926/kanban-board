@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import onepick.kanban.boardlist.dto.BoardListRequestDto;
 import onepick.kanban.boardlist.dto.BoardListResponseDto;
+import onepick.kanban.boardlist.dto.UpdateBoardListRequestDto;
 import onepick.kanban.boardlist.repository.BoardListRepository;
 import onepick.kanban.boardlist.service.BoardListService;
 import org.springframework.http.HttpStatus;
@@ -44,8 +45,8 @@ public class BoardListController {
 
     // 리스트 순서 변경
     @PatchMapping("/order")
-    public ResponseEntity<String> updateListOrder(@PathVariable Long boardId, @RequestBody Map<Long, Integer> listOrderMap) {
-        boardListService.updateListOrder(boardId, listOrderMap);
+    public ResponseEntity<String> updateListOrder(@PathVariable Long boardId, @RequestBody UpdateBoardListRequestDto dto) {
+        boardListService.updateListOrder(boardId, dto);
         return ResponseEntity.ok("리스트 순서가 업데이트되었습니다.");
     }
 
