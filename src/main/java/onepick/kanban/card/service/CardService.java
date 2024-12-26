@@ -6,7 +6,7 @@ import onepick.kanban.boardlist.repository.BoardListRepository;
 import onepick.kanban.card.dto.CardRequestDto;
 import onepick.kanban.card.dto.CardResponseDto;
 import onepick.kanban.card.entity.Card;
-import onepick.kanban.card.repository.CardAttachmentRepository;
+//import onepick.kanban.card.repository.CardAttachmentRepository;
 import onepick.kanban.card.repository.CardRepository;
 import onepick.kanban.common.SlackNotifier;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class CardService {
 
     private final CardRepository cardRepository;
-    private final CardAttachmentRepository cardAttachmentRepository;
+//    private final CardAttachmentRepository cardAttachmentRepository;
     private final BoardListRepository boardListRepository;
     private final SlackNotifier slackNotifier;
 

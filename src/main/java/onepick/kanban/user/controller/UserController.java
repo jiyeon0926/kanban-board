@@ -37,7 +37,6 @@ public class UserController {
     public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword()));
     }
-
     // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
