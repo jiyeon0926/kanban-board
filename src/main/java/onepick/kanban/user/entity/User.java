@@ -4,6 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import onepick.kanban.common.Timestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.Collection;
+import java.util.Collections;
 
 @Entity
 @Getter
@@ -14,7 +19,7 @@ public class User extends Timestamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
     @Column(nullable = false, length = 100)
@@ -34,5 +39,13 @@ public class User extends Timestamp {
         this.password = password;
         this.name = name;
         this.role = Role.of(role);
+    }
+
+    public void updateIsDeleted() {
+        this.isDeleted = true;
+    }
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(role.getName()));
     }
 }

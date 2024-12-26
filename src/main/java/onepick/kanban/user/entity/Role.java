@@ -7,7 +7,7 @@ public enum Role {
 
     USER("user"),
     ADMIN("admin"),
-    WORKSPACEADMIN("workspaceadmin"),
+    WORKSPACE_ADMIN("workspaceAdmin"),
     READONLY("readonly");
 
     private final String name;

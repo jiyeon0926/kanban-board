@@ -1,6 +1,7 @@
 package onepick.kanban.card.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import onepick.kanban.boardlist.entity.BoardList;
@@ -52,5 +53,17 @@ public class Card extends Timestamp {
         this.title =title;
         this.contents = contents;
         this.deadline = deadline;
+    }
+
+    public void updateCard(String title, String contents, LocalDateTime deadline) {
+        if (title != null && !title.isEmpty()) {
+            this.title = title;
+        }
+        if (contents != null) {
+            this.contents = contents;
+        }
+        if (deadline != null) {
+            this.deadline = deadline;
+        }
     }
 }
