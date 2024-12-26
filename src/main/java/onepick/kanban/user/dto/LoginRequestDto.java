@@ -9,7 +9,7 @@ import lombok.Getter;
 public class LoginRequestDto {
 
     @Email(message = "이메일 형식이 아닙니다.")
-    @Size(max = 100)
+    @Size(max = 320)
     private String email;
 
     @Pattern(
