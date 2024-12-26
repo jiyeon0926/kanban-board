@@ -2,6 +2,9 @@ package onepick.kanban.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import onepick.kanban.common.CommonResponseBody;
+import onepick.kanban.user.dto.JwtAuthResponse;
 import onepick.kanban.user.dto.LoginRequestDto;
 import onepick.kanban.user.dto.UserRequestDto;
 import onepick.kanban.user.service.UserService;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@Slf4j(topic = "Security::UserController")
 public class UserController {
 
     private final UserService userService;
@@ -34,12 +38,9 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword()));
-    }
-    // 로그아웃
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
-        return ResponseEntity.status(HttpStatus.OK).body("로그아웃을 하였습니다.");
+    public ResponseEntity<CommonResponseBody<JwtAuthResponse>> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+        JwtAuthResponse authResponse = userService.login(loginRequestDto);
+
+        return ResponseEntity.ok(new CommonResponseBody<>("로그인을 성공하였습니다.", authResponse));
     }
 }
