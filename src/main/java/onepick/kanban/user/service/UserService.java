@@ -3,6 +3,7 @@ package onepick.kanban.user.service;
 import lombok.RequiredArgsConstructor;
 import onepick.kanban.user.dto.JwtAuthResponse;
 import onepick.kanban.user.dto.LoginRequestDto;
+import onepick.kanban.user.dto.PasswordRequestDto;
 import onepick.kanban.user.dto.UserRequestDto;
 import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
@@ -50,6 +51,24 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void updatePassword(Long userId, PasswordRequestDto passwordRequestDto) {
+        User user = userRepository.findByIdOrElseThrow(userId);
+        boolean matches = passwordEncoder.matches(passwordRequestDto.getOldPassword(), user.getPassword());
+
+        if (!matches) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        }
+
+        if (passwordRequestDto.getOldPassword().equals(passwordRequestDto.getNewPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "같은 비밀번호를 사용할 수 없습니다.");
+        }
+
+        String encodedPassword = passwordEncoder.encode(passwordRequestDto.getNewPassword());
+        user.updatePassword(encodedPassword);
+        userRepository.save(user);
+    }
+
     public JwtAuthResponse login(LoginRequestDto loginRequestDto) {
         Optional<User> user = userRepository.findByEmail(loginRequestDto.getEmail());
 
@@ -68,5 +87,38 @@ public class UserService {
         String accessToken = this.jwtProvider.generateToken(authentication);
 
         return new JwtAuthResponse(AuthenticationScheme.BEARER.getName(), accessToken);
+    }
+
+    public JwtAuthResponse checkPassword(Long userId, String password) {
+        User user = userRepository.findByIdOrElseThrow(userId);
+        boolean matches = passwordEncoder.matches(password, user.getPassword());
+
+        if (!matches) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 입니다.");
+        }
+
+        Authentication authentication = this.authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getEmail(), password)
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String tempToken = this.jwtProvider.tempToken(authentication);
+
+        return new JwtAuthResponse(AuthenticationScheme.BEARER.getName(), tempToken);
+    }
+
+    public boolean checkHeader(String extractToken) {
+        if (!jwtProvider.isTempToken(extractToken)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "임시 토큰이 유효하지 않습니다.");
+        } else {
+            return true;
+        }
+    }
+
+    public String extractToken(String tempToken) {
+        if (tempToken != null && tempToken.startsWith("Bearer ")) {
+            return tempToken.substring(7);
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Authorization 헤더에 Bearer 토큰이 포함되어야 합니다.");
     }
 }
