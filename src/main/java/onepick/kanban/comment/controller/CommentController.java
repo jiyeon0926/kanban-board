@@ -7,6 +7,7 @@ import onepick.kanban.comment.service.CommentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,5 +25,13 @@ public class CommentController {
                                                 @RequestBody CommentRequestDto requestDto) {
         Comment comment = commentService.createComment(cardId, requestDto);
         return ResponseEntity.ok(comment);
+    }
+
+    // 댓글 수정
+    @PutMapping("/{commentId}")
+    public ResponseEntity<Comment> updateComment(@PathVariable Long commentId,
+                                                 @RequestBody CommentRequestDto requestDto) {
+        Comment updatedComment = commentService.updateComment(commentId, requestDto);
+        return ResponseEntity.ok(updatedComment);
     }
 }

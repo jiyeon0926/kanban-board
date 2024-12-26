@@ -35,4 +35,9 @@ public class Comment extends Timestamp {
         this.contents = contents;
         this.emoji = emoji;
     }
+
+    public void update(String contents, String emoji) {
+        this.contents = contents;
+        this.emoji = emoji;
+    }
 }

@@ -27,4 +27,11 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
+    public Comment updateComment(Long commentId, CommentRequestDto requestDto) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
+
+        comment.update(requestDto.getContents(), requestDto.getEmoji());
+        return commentRepository.save(comment);
+    }
 }
