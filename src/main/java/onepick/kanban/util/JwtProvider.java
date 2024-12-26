@@ -37,6 +37,11 @@ public class JwtProvider {
         return this.generateTokenBy(username);
     }
 
+    public String tempToken(Authentication authentication) throws EntityNotFoundException {
+        String username = authentication.getName();
+        return this.tempTokenBy(username);
+    }
+
     public String getUsername(String token) {
         Claims claims = this.getClaims(token);
         return claims.getSubject();
@@ -49,9 +54,9 @@ public class JwtProvider {
         } catch (MalformedJwtException e) {
             log.error("잘못된 JWT 토큰입니다.: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            log.error("JWT token is expired: {}", e.getMessage());
+            log.error("JWT 토큰이 만료되었습니다.: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
-            log.error("JWT token is unsupported: {}", e.getMessage());
+            log.error("지원되지 않는 JWT 토큰입니다.: {}", e.getMessage());
         }
 
         return false;
@@ -75,6 +80,27 @@ public class JwtProvider {
                 .claim("role", user.get().getRole())
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
                 .compact();
+    }
+
+    // 이메일 주소를 이용해 임시 토큰 생성한 후 반환
+    private String tempTokenBy(String email) throws EntityNotFoundException {
+        Date currentDate = new Date();
+        Date expireDate = new Date(currentDate.getTime() + 60000);
+
+        return Jwts.builder()
+                .subject(email)
+                .claim("type", "temp")
+                .issuedAt(currentDate)
+                .expiration(expireDate)
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
+                .compact();
+    }
+
+    // 임시 토큰 검증
+    public boolean isTempToken(String token) {
+        Claims claims = getClaims(token);
+        System.out.println(claims.get("type"));
+        return "temp".equals(claims.get("type"));
     }
 
     // JWT의 claim 부분을 추출
