@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -47,7 +48,8 @@ public class WebConfig {
                                         DispatcherType.ERROR).permitAll()
                                 .requestMatchers("/admins/**").hasRole("ADMIN")
                                 .requestMatchers("/staffs/**").hasRole("STAFF")
-                                .requestMatchers("/users/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.GET, "/workspaces/**", "/boards/**", "/cards/**").hasAuthority("READONLY")
+                                .requestMatchers("/users/**").hasRole("READONLY")
                                 .anyRequest().authenticated()
                 )
                 // Spring Security 예외에 대한 처리를 핸들러에 위임
