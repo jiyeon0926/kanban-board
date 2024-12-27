@@ -1,6 +1,7 @@
 package onepick.kanban.user.service;
 
 import lombok.RequiredArgsConstructor;
+import onepick.kanban.common.SlackNotifier;
 import onepick.kanban.user.dto.JwtAuthResponse;
 import onepick.kanban.user.dto.LoginRequestDto;
 import onepick.kanban.user.dto.PasswordRequestDto;
@@ -29,6 +30,7 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final SlackNotifier slackNotifier;
 
     @Transactional
     public void signup(UserRequestDto userRequestDto) {
@@ -85,6 +87,9 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String accessToken = this.jwtProvider.generateToken(authentication);
+
+        String message = user.get().getName() + "님이 로그인 하였습니다.";
+        slackNotifier.sendNotification(message);
 
         return new JwtAuthResponse(AuthenticationScheme.BEARER.getName(), accessToken);
     }

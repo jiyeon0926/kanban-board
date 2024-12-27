@@ -1,6 +1,7 @@
 package onepick.kanban.user.service;
 
 import lombok.RequiredArgsConstructor;
+import onepick.kanban.common.SlackNotifier;
 import onepick.kanban.user.dto.RoleResponseDto;
 import onepick.kanban.user.dto.UserResponseDto;
 import onepick.kanban.user.entity.Role;
@@ -18,6 +19,7 @@ import java.util.List;
 public class AdminService {
 
     private final UserRepository userRepository;
+    private final SlackNotifier slackNotifier;
 
     @Transactional
     public RoleResponseDto updateRole(Long userId, String role) {
@@ -29,6 +31,11 @@ public class AdminService {
 
         user.updateRole(role);
         userRepository.save(user);
+
+        if (user.getRole().equals(Role.STAFF)) {
+            String message = user.getName() + "님은 워크스페이스 관리자로 지정됐습니다.";
+            slackNotifier.sendNotification(message);
+        }
 
         return RoleResponseDto.toDto(user);
     }
