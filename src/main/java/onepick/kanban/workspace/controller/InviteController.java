@@ -19,14 +19,11 @@ public class InviteController {
     public ResponseEntity<InviteResponseDto> inviteMembers(
             @PathVariable Long workspaceId,
             @PathVariable Long inviterId,
-            @RequestBody @Valid InviteRequestDto requestDto
-    ) {
+            @RequestBody @Valid InviteRequestDto requestDto) {
         InviteResponseDto response = inviteService.inviteMembers(workspaceId, inviterId, requestDto);
-        if (response.getMessage().contains("실패")) {
-            return ResponseEntity.badRequest().body(response);
-        }
         return ResponseEntity.status(201).body(response);
     }
+
 
     @PatchMapping("/{workspaceId}/invites/{inviteId}")
     public ResponseEntity<InviteResponseDto> updateInviteStatus(
@@ -36,9 +33,7 @@ public class InviteController {
             @RequestBody @Valid String status
     ) {
         InviteResponseDto response = inviteService.updateInviteStatus(workspaceId, inviteId, userId, status);
-        if (response.getMessage().contains("실패")) {
-            return ResponseEntity.badRequest().body(response);
-        }
         return ResponseEntity.ok(response);
     }
 }
+

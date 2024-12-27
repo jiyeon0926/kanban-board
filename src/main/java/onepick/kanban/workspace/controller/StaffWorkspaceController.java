@@ -3,20 +3,15 @@ package onepick.kanban.workspace.controller;
 import lombok.RequiredArgsConstructor;
 import onepick.kanban.workspace.dto.WorkspaceRequestDto;
 import onepick.kanban.workspace.dto.WorkspaceResponseDto;
-import onepick.kanban.workspace.entity.Workspace;
 import onepick.kanban.workspace.service.WorkspaceService;
-import org.hibernate.jdbc.Work;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import software.amazon.awssdk.core.Response;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/staffs/workspaces")
 @RequiredArgsConstructor
-public class WorkspaceController {
+public class StaffWorkspaceController {
 
     private final WorkspaceService workspaceService;
 
@@ -25,13 +20,6 @@ public class WorkspaceController {
     public ResponseEntity<WorkspaceResponseDto> createWorkspace(@PathVariable Long creatorId, @RequestBody WorkspaceRequestDto requestDto) {
         WorkspaceResponseDto responseDto = workspaceService.createWorkspace(creatorId, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-    }
-
-    // 워크스페이스 조회
-    @GetMapping("/workspaces")
-    public ResponseEntity<List<WorkspaceResponseDto>> getWorkSpaces() {
-        List<WorkspaceResponseDto> responseDtos = workspaceService.getAllWorkspaces();
-        return ResponseEntity.ok(responseDtos);
     }
 
     // 워크스페이스 수정
@@ -45,7 +33,7 @@ public class WorkspaceController {
     @DeleteMapping("/{workspaceId}")
     public ResponseEntity<String> deleteWorkspace(@PathVariable Long workspaceId, Long deleterId) {
         workspaceService.deleteWorkspace(workspaceId, deleterId);
-        return ResponseEntity.ok("워크스페이스가 삭제되었습니다.");
+        return ResponseEntity.noContent().build();
     }
 
 }
