@@ -2,6 +2,8 @@ package onepick.kanban.workspace.service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import onepick.kanban.exception.CustomException;
+import onepick.kanban.exception.ErrorCode;
 import onepick.kanban.user.entity.Role;
 import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
@@ -25,15 +27,15 @@ public class InviteService {
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
 
-    public InviteResponseDto inviteMembers(Long workspaceId, Long inviterId, InviteRequestDto requestDto) {
+    public InviteResponseDto inviteMembers(Long workspaceId, Long inviterId, @Valid InviteRequestDto requestDto) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 워크스페이스 ID입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_WORKSPACE_ID));
 
         User inviter = userRepository.findById(inviterId)
-                .orElseThrow(() -> new IllegalArgumentException("초대한 사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_INVITER));
 
-        if (!inviter.getRole().equals(Role.WORKSPACE_ADMIN) && !inviter.getRole().equals(Role.ADMIN)) {
-            throw new IllegalArgumentException("초대 권한이 없는 사용자입니다.");
+        if (!inviter.getRole().equals(Role.STAFF) && !inviter.getRole().equals(Role.ADMIN)) {
+            throw new CustomException(ErrorCode.INVALID_WORKSPACE_INVITER);
         }
 
         if (requestDto.getEmails() == null || requestDto.getEmails().isEmpty()) {
@@ -58,9 +60,9 @@ public class InviteService {
         return new InviteResponseDto("초대를 요청하였습니다.");
     }
 
-    public InviteResponseDto updateInviteStatus(Long workspaceId, Long inviteId, Long userId, @Valid String status) {
-        Invite invite = inviteRepository.findById(inviteId)
-                .orElseThrow(() -> new IllegalArgumentException("초대 ID가 유효하지 않습니다."));
+    public InviteResponseDto updateInviteStatus(Long workspaceId, Long inviteeId, Long userId, @Valid String status) {
+        Invite invite = inviteRepository.findById(inviteeId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INVITEE_ID));
 
 
         if (!invite.getWorkspace().getId().equals(workspaceId)) {

@@ -18,7 +18,7 @@ public class InviteController {
     @PostMapping("/{workspaceId}/invite")
     public ResponseEntity<InviteResponseDto> inviteMembers(
             @PathVariable Long workspaceId,
-            @RequestParam Long inviterId,
+            @PathVariable Long inviterId,
             @RequestBody @Valid InviteRequestDto requestDto
     ) {
         InviteResponseDto response = inviteService.inviteMembers(workspaceId, inviterId, requestDto);
@@ -32,7 +32,7 @@ public class InviteController {
     public ResponseEntity<InviteResponseDto> updateInviteStatus(
             @PathVariable Long workspaceId,
             @PathVariable Long inviteId,
-            @RequestParam Long userId,
+            @PathVariable Long userId,
             @RequestBody @Valid String status
     ) {
         InviteResponseDto response = inviteService.updateInviteStatus(workspaceId, inviteId, userId, status);

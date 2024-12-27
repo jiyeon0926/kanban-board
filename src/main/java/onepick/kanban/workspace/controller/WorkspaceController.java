@@ -6,6 +6,7 @@ import onepick.kanban.workspace.dto.WorkspaceResponseDto;
 import onepick.kanban.workspace.entity.Workspace;
 import onepick.kanban.workspace.service.WorkspaceService;
 import org.hibernate.jdbc.Work;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import software.amazon.awssdk.core.Response;
@@ -21,13 +22,13 @@ public class WorkspaceController {
 
     // 워크스페이스 생성
     @PostMapping
-    public ResponseEntity<WorkspaceResponseDto> createWorkspace(@RequestBody WorkspaceRequestDto requestDto) {
-        WorkspaceResponseDto responseDto = workspaceService.createWorkspace(requestDto);
-        return ResponseEntity.status(201).body(responseDto);
+    public ResponseEntity<WorkspaceResponseDto> createWorkspace(@PathVariable Long creatorId, @RequestBody WorkspaceRequestDto requestDto) {
+        WorkspaceResponseDto responseDto = workspaceService.createWorkspace(creatorId, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     // 워크스페이스 조회
-    @GetMapping
+    @GetMapping("/workspaces")
     public ResponseEntity<List<WorkspaceResponseDto>> getWorkSpaces() {
         List<WorkspaceResponseDto> responseDtos = workspaceService.getAllWorkspaces();
         return ResponseEntity.ok(responseDtos);
