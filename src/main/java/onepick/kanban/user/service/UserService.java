@@ -74,7 +74,7 @@ public class UserService {
     public JwtAuthResponse login(LoginRequestDto loginRequestDto) {
         Optional<User> user = userRepository.findByEmail(loginRequestDto.getEmail());
 
-        if (user.isEmpty() || !passwordEncoder.matches(loginRequestDto.getPassword(), user.get().getPassword())) {
+        if (user.isEmpty() || !passwordEncoder.matches(loginRequestDto.getPassword(), user.get().getPassword()) || user.get().isDeleted() == true) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 이메일 혹은 잘못된 비밀번호 입니다.");
         }
 
