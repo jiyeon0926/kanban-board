@@ -2,7 +2,6 @@ package onepick.kanban.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import onepick.kanban.common.CommonResponseBody;
 import onepick.kanban.user.dto.*;
 import onepick.kanban.user.service.UserService;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@Slf4j(topic = "Security::UserController")
 public class UserController {
 
     private final UserService userService;
