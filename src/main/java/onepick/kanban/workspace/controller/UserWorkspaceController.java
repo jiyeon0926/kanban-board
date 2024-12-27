@@ -17,6 +17,7 @@ public class UserWorkspaceController {
 
     private final WorkspaceService workspaceService;
 
+    // 워크스페이스 조회
     @GetMapping
     public ResponseEntity<List<WorkspaceResponseDto>> getAllWorkSpaces() {
         List<WorkspaceResponseDto> responseDtos = workspaceService.getAllWorkspaces();
