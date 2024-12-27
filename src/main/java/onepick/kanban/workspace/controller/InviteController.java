@@ -15,6 +15,7 @@ public class InviteController {
 
     private final InviteService inviteService;
 
+    // 멤버 초대
     @PostMapping("/{workspaceId}/invite")
     public ResponseEntity<InviteResponseDto> inviteMembers(
             @PathVariable Long workspaceId,
@@ -24,7 +25,7 @@ public class InviteController {
         return ResponseEntity.status(201).body(response);
     }
 
-
+    // 초대 상태 수정
     @PatchMapping("/{workspaceId}/invites/{inviteId}")
     public ResponseEntity<InviteResponseDto> updateInviteStatus(
             @PathVariable Long workspaceId,
