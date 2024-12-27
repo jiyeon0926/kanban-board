@@ -14,5 +14,5 @@ public class CardResponseDto {
     private final String title;
     private final String contents;
     private final LocalDateTime deadline;
-//    private final List<CardAttachmentDto> attachements;
+    private final List<CardAttachmentDto> attachements;
 }
