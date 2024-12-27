@@ -50,7 +50,7 @@ public class CardService {
 
         cardHistoryService.save(new CardHistory(card, "카드가 생성되었습니다."));
 
-        return new CardResponseDto(card.getId(), card.getTitle(), card.getContents(), card.getDeadline());
+        return new CardResponseDto(card.getId(), card.getTitle(), card.getContents(), card.getDeadline(), null);
     }
 
     @Transactional(readOnly = true)
@@ -59,7 +59,7 @@ public class CardService {
 
         List<Card> cards = cardRepository.findByBoardListId(boardListId);
         return cards.stream()
-                .map(card -> new CardResponseDto(card.getId(), card.getTitle(), card.getContents(), card.getDeadline()))
+                .map(card -> new CardResponseDto(card.getId(), card.getTitle(), card.getContents(), card.getDeadline(), null))
                 .collect(Collectors.toList());
     }
 
@@ -75,7 +75,7 @@ public class CardService {
 
         cardHistoryService.save(new CardHistory(savedCard, "카드가 수정되었습니다."));
 
-        return new CardResponseDto(savedCard.getId(), savedCard.getTitle(), savedCard.getContents(), savedCard.getDeadline());
+        return new CardResponseDto(savedCard.getId(), savedCard.getTitle(), savedCard.getContents(), savedCard.getDeadline(), null);
     }
 
     @Transactional
