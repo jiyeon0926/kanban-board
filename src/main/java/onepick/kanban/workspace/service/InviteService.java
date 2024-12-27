@@ -1,6 +1,5 @@
 package onepick.kanban.workspace.service;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import onepick.kanban.exception.CustomException;
 import onepick.kanban.exception.ErrorCode;
@@ -8,15 +7,18 @@ import onepick.kanban.user.entity.Role;
 import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
 import onepick.kanban.workspace.dto.InviteRequestDto;
-import onepick.kanban.workspace.dto.InviteResponseDto;
 import onepick.kanban.workspace.entity.Invite;
 import onepick.kanban.workspace.entity.Status;
 import onepick.kanban.workspace.entity.Workspace;
 import onepick.kanban.workspace.repository.InviteRepository;
 import onepick.kanban.workspace.repository.WorkspaceRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,42 +29,31 @@ public class InviteService {
     private final UserRepository userRepository;
 
     // 멤버 초대
-    public InviteResponseDto inviteMembers(Long workspaceId, Long inviterId, @Valid InviteRequestDto requestDto) {
-
-        if (requestDto.getEmails() == null || requestDto.getEmails().isEmpty()) {
+    public void inviteMembers(Long workspaceId, InviteRequestDto requestDto) {
+        if (requestDto.getEmails().isEmpty()) {
             throw new CustomException(ErrorCode.INVALID_REQUEST, "이메일 목록이 비어있습니다.");
         }
 
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_WORKSPACE_ID));
 
-        User inviter = userRepository.findById(inviterId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_INVITER));
+        // 토큰에 저장된 이메일 가져와서 관리자 찾기
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String authEmail = auth.getName();
+        Optional<User> inviter = userRepository.findByEmail(authEmail);
 
-        if (!inviter.getRole().equals(Role.STAFF) && !inviter.getRole().equals(Role.ADMIN)) {
-            throw new CustomException(ErrorCode.INVALID_WORKSPACE_INVITER);
-        }
+        // 요청한 이메일을 기반으로 멤버 찾기
+        List<User> invitees = userRepository.findAllByEmailIn(requestDto.getEmails());
 
-        List<User> invitees = userRepository.findAllByEmail(requestDto.getEmails());
-        if (invitees.size() != requestDto.getEmails().size()) {
-            List<String> notFoundEmails = requestDto.getEmails().stream()
-                    .filter(email -> invitees.stream().noneMatch(user -> user.getEmail().equals(email)))
-                    .toList();
+        List<Invite> invites = invitees.stream()
+                .map(invitee -> new Invite(workspace, inviter.get(), invitee))
+                .collect(Collectors.toList());
 
-            throw new CustomException(ErrorCode.USER_NOT_FOUND_INVITEE,
-                    "다음 이메일이 존재하지 않습니다: " + String.join(", ", notFoundEmails));
-        }
-
-        invitees.forEach(invitee -> {
-            Invite invite = new Invite(workspace, inviter, invitee);
-            inviteRepository.save(invite);
-        });
-
-        return new InviteResponseDto("초대를 요청하였습니다.");
+        inviteRepository.saveAll(invites);
     }
 
     // 초대 상태 수정
-    public InviteResponseDto updateInviteStatus(Long workspaceId, Long inviteeId, Long userId, @Valid String status) {
+    public void updateInviteStatus(Long workspaceId, Long inviteeId, Long userId, String status) {
         Invite invite = inviteRepository.findById(inviteeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INVITEE_ID));
 
@@ -81,8 +72,6 @@ public class InviteService {
 
         invite.changeStatus(Status.valueOf(status));
         inviteRepository.save(invite);
-
-        return new InviteResponseDto("초대 상태가 성공적으로 업데이트되었습니다.");
     }
 
     private boolean isValidStatus(String status) {
