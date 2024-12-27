@@ -26,14 +26,8 @@ public class WorkspaceService {
     private final SlackNotifier slackNotifier;
     private final UserRepository userRepository;
 
-    // 워크스페이스 생성 권한 없는 사용자 예외 처리 구현해야 함.
     @Transactional
-    public WorkspaceResponseDto createWorkspace(Long creatorId, WorkspaceRequestDto requestDto) {
-        User creator = userRepository.findById(creatorId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_CREATOR));
-        if(!creator.getRole().equals(Role.STAFF) && !creator.getRole().equals(Role.ADMIN)) {
-            throw new CustomException(ErrorCode.INVALID_WORKSPACE_CREATOR);
-        }
+    public WorkspaceResponseDto createWorkspace(WorkspaceRequestDto requestDto) {
         Workspace workspace = new Workspace(requestDto.getTitle(), requestDto.getContents());
         workspaceRepository.save(workspace);
 
@@ -63,16 +57,10 @@ public class WorkspaceService {
     }
 
     @Transactional
-    public void deleteWorkspace(Long workspaceId, Long deleterId) {
+    public void deleteWorkspace(Long workspaceId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new CustomException(ErrorCode.WORKSPACE_NOT_FOUND));
 
-        User deleter = userRepository.findById(deleterId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_DELETER));
-
-        if (!deleter.getRole().equals(Role.STAFF) && !deleter.getRole().equals(Role.ADMIN)) {
-            throw new CustomException(ErrorCode.INVALID_WORKSPACE_DELETER);
-        }
         workspaceRepository.delete(workspace);
     }
 }
