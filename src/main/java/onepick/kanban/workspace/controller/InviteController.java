@@ -36,4 +36,3 @@ public class InviteController {
         return ResponseEntity.ok(response);
     }
 }
-
