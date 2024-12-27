@@ -6,6 +6,7 @@ import onepick.kanban.board.entity.Board;
 import onepick.kanban.board.repository.BoardRepository;
 import onepick.kanban.boardlist.dto.BoardListRequestDto;
 import onepick.kanban.boardlist.dto.BoardListResponseDto;
+import onepick.kanban.boardlist.dto.EditBoardListRequestDto;
 import onepick.kanban.boardlist.dto.UpdateBoardListRequestDto;
 import onepick.kanban.boardlist.entity.BoardList;
 import onepick.kanban.boardlist.repository.BoardListRepository;
@@ -35,11 +36,11 @@ public class BoardListService {
         return new BoardListResponseDto(boardListRepository.save(boardList));
     }
 
-    public BoardListResponseDto updateList(Long listId, BoardListRequestDto requestDto) {
+    public BoardListResponseDto updateList(Long listId, EditBoardListRequestDto requestDto) {
         BoardList boardList = boardListRepository.findById(listId)
                 .orElseThrow(() -> new IllegalArgumentException("리스트를 찾을 수 없습니다."));
 
-        boardList.update(requestDto.getTitle(), requestDto.getOrder());
+        boardList.update(requestDto.getTitle(), requestDto.getContents());
         return new BoardListResponseDto(boardListRepository.save(boardList));
     }
 
@@ -53,8 +54,8 @@ public class BoardListService {
 
         for (BoardList list : boardList) {
             if (list.getId() == dto.getListId()) {
-                list.update(list.getTitle(), dto.getOrder());
-            } else if (list.getSequence() < dto.getOrder())
+                list.updateSequence(dto.getSequence());
+            } else if (list.getSequence() < dto.getSequence())
                 continue;
             else {
                 list.addSequence();

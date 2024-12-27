@@ -14,7 +14,6 @@ public class BoardListResponseDto {
     private String title;
     private String contents;
     private Integer sequence;
-    private List<CardResponseDto> cards;
 
     public BoardListResponseDto(BoardList boardList) {
         this.id = boardList.getId();

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import onepick.kanban.boardlist.dto.BoardListRequestDto;
 import onepick.kanban.boardlist.dto.BoardListResponseDto;
+import onepick.kanban.boardlist.dto.EditBoardListRequestDto;
 import onepick.kanban.boardlist.dto.UpdateBoardListRequestDto;
 import onepick.kanban.boardlist.repository.BoardListRepository;
 import onepick.kanban.boardlist.service.BoardListService;
@@ -38,7 +39,7 @@ public class BoardListController {
     // 리스트 수정
     @PutMapping("/{listId}")
     public ResponseEntity<BoardListResponseDto> updateList(@PathVariable Long listId,
-                                                           @RequestBody BoardListRequestDto requestDto) {
+                                                           @RequestBody EditBoardListRequestDto requestDto) {
         BoardListResponseDto list = boardListService.updateList(listId, requestDto);
         return ResponseEntity.ok(list);
     }

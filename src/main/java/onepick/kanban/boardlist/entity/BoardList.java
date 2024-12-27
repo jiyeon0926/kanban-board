@@ -39,12 +39,16 @@ public class BoardList extends Timestamp {
         this.contents = contents;
     }
 
-    public void update(String title, Integer sequence) {
+    public void update(String title, String contents) {
         this.title = title;
-        this.sequence = sequence;
+        this.contents = contents;
     }
 
     public void addSequence() {
         this.sequence++;
+    }
+
+    public void updateSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 }
