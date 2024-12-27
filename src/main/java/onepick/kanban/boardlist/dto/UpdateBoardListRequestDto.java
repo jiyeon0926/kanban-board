@@ -4,6 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class UpdateBoardListRequestDto {
-    private Long listId;
-    private Integer order;
+    private Integer sequence;
 }
