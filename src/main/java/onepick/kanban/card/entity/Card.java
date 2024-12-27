@@ -28,7 +28,7 @@ public class Card extends Timestamp {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String contents;
 
-    private Integer order = 1;
+    private Integer sequence = 1;
 
     @Column(nullable = false)
     private LocalDateTime deadline;
