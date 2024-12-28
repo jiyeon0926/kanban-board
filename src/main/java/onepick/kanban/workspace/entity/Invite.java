@@ -37,7 +37,11 @@ public class Invite extends Timestamp {
         this.invitee = invitee;
     }
 
-    public void changeStatus(Status newStatus) {
-        this.status = newStatus;
+    public void changeStatus(String newStatus) {
+        this.status = Status.of(newStatus);
+    }
+
+    public void changeCancelled() {
+        this.status = Status.CANCELLED;
     }
 }
