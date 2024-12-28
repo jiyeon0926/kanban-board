@@ -1,8 +1,6 @@
 package onepick.kanban.workspace.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import onepick.kanban.workspace.dto.InviteRequestDto;
 import onepick.kanban.workspace.dto.WorkspaceRequestDto;
@@ -51,12 +49,12 @@ public class StaffWorkspaceController {
         return ResponseEntity.status(HttpStatus.CREATED).body("초대를 요청하였습니다.");
     }
 
-    // 멤버 초대 상태 수정 (cancelled)
-    @PatchMapping("/{workspaceId}/invites/{inviteId}")
+    // 멤버 초대 취소
+    @DeleteMapping("/{workspaceId}/invites/{inviteId}")
     public ResponseEntity<String> updateInviteStatus(
             @PathVariable Long workspaceId,
             @PathVariable Long inviteId) {
-        inviteService.changeCancelled(workspaceId, inviteId);
-        return ResponseEntity.ok().body("초대 상태가 성공적으로 업데이트되었습니다.");
+        inviteService.deleteInvite(workspaceId, inviteId);
+        return ResponseEntity.ok().body("멤버 초대를 취소하였습니다.");
     }
 }
