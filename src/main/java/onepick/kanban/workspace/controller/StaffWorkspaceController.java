@@ -1,9 +1,13 @@
 package onepick.kanban.workspace.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import onepick.kanban.workspace.dto.InviteRequestDto;
 import onepick.kanban.workspace.dto.WorkspaceRequestDto;
 import onepick.kanban.workspace.dto.WorkspaceResponseDto;
+import onepick.kanban.workspace.service.InviteService;
 import onepick.kanban.workspace.service.WorkspaceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class StaffWorkspaceController {
 
     private final WorkspaceService workspaceService;
+    private final InviteService inviteService;
 
     // 워크스페이스 생성
     @PostMapping
@@ -37,4 +42,21 @@ public class StaffWorkspaceController {
         return ResponseEntity.noContent().build();
     }
 
+    // 멤버 초대
+    @PostMapping("/{workspaceId}/invite")
+    public ResponseEntity<String> inviteMembers(
+            @PathVariable Long workspaceId,
+            @Valid @RequestBody InviteRequestDto requestDto) {
+        inviteService.inviteMembers(workspaceId, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body("초대를 요청하였습니다.");
+    }
+
+    // 멤버 초대 상태 수정 (cancelled)
+    @PatchMapping("/{workspaceId}/invites/{inviteId}")
+    public ResponseEntity<String> updateInviteStatus(
+            @PathVariable Long workspaceId,
+            @PathVariable Long inviteId) {
+        inviteService.changeCancelled(workspaceId, inviteId);
+        return ResponseEntity.ok().body("초대 상태가 성공적으로 업데이트되었습니다.");
+    }
 }

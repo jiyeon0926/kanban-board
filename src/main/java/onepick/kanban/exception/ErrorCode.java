@@ -19,6 +19,7 @@ public enum ErrorCode {
     INVALID_WORKSPACE_DELETER(HttpStatus.FORBIDDEN, "워크스페이스 삭제 권한이 없는 사용자입니다."),
     INVALID_WORKSPACE_CREATOR(HttpStatus.FORBIDDEN, "워크스페이스 생성 권한이 없는 사용자입니다."),
     INVALID_WORKSPACE_INVITER(HttpStatus.FORBIDDEN, "워크스페이스 초대 권한이 없는 사용자입니다."),
+    INVALID_WORKSPACE_INVITEE(HttpStatus.FORBIDDEN, "초대 받은 사용자가 아닙니다."),
 
     // 404
     WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "워크스페이스를 찾을 수 없습니다."),
