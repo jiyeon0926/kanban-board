@@ -6,6 +6,7 @@ import onepick.kanban.comment.dto.CommentResponseDto;
 import onepick.kanban.comment.entity.Comment;
 import onepick.kanban.comment.service.CommentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,8 +25,9 @@ public class CommentController {
     // 댓글 작성
     @PostMapping
     public ResponseEntity<CommentResponseDto> createComment(@PathVariable Long cardId,
-                                                            @RequestBody CommentRequestDto requestDto) {
-        CommentResponseDto comment = commentService.createComment(cardId, requestDto);
+                                                            @RequestBody CommentRequestDto requestDto,
+                                                            Authentication authentication) {
+        CommentResponseDto comment = commentService.createComment(cardId, requestDto, authentication.getName());
         return ResponseEntity.ok().body(comment);
     }
 

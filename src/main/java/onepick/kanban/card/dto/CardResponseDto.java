@@ -16,6 +16,6 @@ public class CardResponseDto {
     private final String contents;
     private final LocalDateTime deadline;
     private final List<CardAttachmentDto> attachments;
-//    private final List<CommentDto> comments;
+    private final List<CommentResponseDto> comments;
     private final List<CardHistoryDto> histories;
 }
