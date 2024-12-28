@@ -22,11 +22,11 @@ public class CommentService {
     private final UserRepository userRepository;
     private final SlackNotifier slackNotifier;
 
-    public CommentResponseDto createComment(Long cardId, CommentRequestDto requestDto) {
+    public CommentResponseDto createComment(Long cardId, CommentRequestDto requestDto, String email) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드를 찾을 수 없습니다."));
 
-        User user = userRepository.findById(card.getId())
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
         Comment comment = new Comment(card, user, requestDto.getContents(), requestDto.getEmoji());

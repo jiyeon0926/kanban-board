@@ -13,6 +13,7 @@ import onepick.kanban.card.entity.CardHistory;
 import onepick.kanban.card.repository.CardAttachmentRepository;
 import onepick.kanban.card.repository.CardHistoryRepository;
 import onepick.kanban.card.repository.CardRepository;
+import onepick.kanban.comment.dto.CommentResponseDto;
 import onepick.kanban.common.SlackNotifier;
 import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
@@ -112,20 +113,14 @@ public class CardService {
 
     private CardResponseDto mapToCardResponseDto(Card card) {
 
-        // attachmentRepository.findByCardId(cardId)
         List<CardAttachmentDto> attachments = card.getCardAttachments().stream()
                 .map(att -> new CardAttachmentDto(att.getId(), att.getImage(), att.getImageName(), att.getFileType()))
                 .collect(Collectors.toList());
 
-        //  commentsRepo.findByCardId(cardId)
-//        List<CommentResponseDtoDto> comments = card.getComments().stream()
-//                .map(c -> new CommentResponseDto(c.getId(), c.getContents(), c.getEmoji(), c.getUser().getName(), c.getCreatedAt()))
-//                .collect(Collectors.toList());
+        List<CommentResponseDto> comments = card.getComments().stream()
+                .map(c -> new CommentResponseDto(c.getId(), c.getContents(), c.getEmoji(), c.getUser().getName(), card.getId(), c.getCreatedAt(), c.getModifiedAt()))
+                .collect(Collectors.toList());
 
-
-        //
-
-        //  historyRepo.findByCardId(cardId)
         List<CardHistoryDto> histories = card.getCardHistories().stream()
                 .map(h -> new CardHistoryDto(h.getId(), h.getLogMessage(), h.getCreatedAt()))
                 .collect(Collectors.toList());
@@ -136,7 +131,7 @@ public class CardService {
                 card.getContents(),
                 card.getDeadline(),
                 attachments,
-//                comments,
+                comments,
                 histories
         );
     }
