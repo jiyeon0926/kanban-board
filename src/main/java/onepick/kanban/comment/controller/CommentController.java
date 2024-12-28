@@ -2,6 +2,7 @@ package onepick.kanban.comment.controller;
 
 import lombok.RequiredArgsConstructor;
 import onepick.kanban.comment.dto.CommentRequestDto;
+import onepick.kanban.comment.dto.CommentResponseDto;
 import onepick.kanban.comment.entity.Comment;
 import onepick.kanban.comment.service.CommentService;
 import org.springframework.http.ResponseEntity;
@@ -22,18 +23,18 @@ public class CommentController {
 
     // 댓글 작성
     @PostMapping
-    public ResponseEntity<Comment> createComment(@PathVariable Long cardId,
-                                                @RequestBody CommentRequestDto requestDto) {
-        Comment comment = commentService.createComment(cardId, requestDto);
-        return ResponseEntity.ok(comment);
+    public ResponseEntity<CommentResponseDto> createComment(@PathVariable Long cardId,
+                                                            @RequestBody CommentRequestDto requestDto) {
+        CommentResponseDto comment = commentService.createComment(cardId, requestDto);
+        return ResponseEntity.ok().body(comment);
     }
 
     // 댓글 수정
     @PutMapping("/{commentId}")
-    public ResponseEntity<Comment> updateComment(@PathVariable Long commentId,
+    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long commentId,
                                                  @RequestBody CommentRequestDto requestDto) {
-        Comment updatedComment = commentService.updateComment(commentId, requestDto);
-        return ResponseEntity.ok(updatedComment);
+        CommentResponseDto updatedComment = commentService.updateComment(commentId, requestDto);
+        return ResponseEntity.ok().body(updatedComment);
     }
 
     // 댓글 삭제
