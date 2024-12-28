@@ -1,7 +1,6 @@
 package onepick.kanban.card.service;
 
 import lombok.RequiredArgsConstructor;
-import onepick.kanban.board.entity.Board;
 import onepick.kanban.board.repository.BoardRepository;
 import onepick.kanban.boardlist.entity.BoardList;
 import onepick.kanban.boardlist.repository.BoardListRepository;
@@ -15,7 +14,6 @@ import onepick.kanban.card.repository.CardAttachmentRepository;
 import onepick.kanban.card.repository.CardHistoryRepository;
 import onepick.kanban.card.repository.CardRepository;
 import onepick.kanban.common.SlackNotifier;
-import onepick.kanban.user.entity.Role;
 import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -68,27 +66,25 @@ public class CardService {
     }
 
     @Transactional(readOnly = true)
-    public List<CardResponseDto> getCards(Long boardListId, User user) {
-        validateUserWorkspaceAccess(user, boardListId);
+    public List<CardResponseDto> getCards(Long boardListId) {
 
         List<Card> cards = cardRepository.findByBoardListId(boardListId);
+
         return cards.stream()
                 .map(this::mapToCardResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public CardResponseDto getCard(Long cardId, User user) {
+    public CardResponseDto getCard(Long cardId) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new NoSuchElementException("카드를 찾을 수 없습니다."));
-        validateUserWorkspaceAccess(user, card.getBoardList().getBoard().getWorkspace().getId());
 
         return mapToCardResponseDto(card);
     }
 
     @Transactional
-    public CardResponseDto updateCard(Long cardId, CardRequestDto requestDto, User user) {
-        validateUserRole(user, Role.READONLY);
+    public CardResponseDto updateCard(Long cardId, CardRequestDto requestDto) {
 
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new NoSuchElementException("카드를 찾을 수 없습니다."));
@@ -107,38 +103,29 @@ public class CardService {
     }
 
     @Transactional
-    public void deleteCard(Long cardId, User user) {
-        validateUserRole(user, Role.READONLY);
+    public void deleteCard(Long cardId) {
 
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new NoSuchElementException("카드를 찾을 수 없습니다."));
         cardRepository.delete(card);
     }
 
-    private void validateUserRole(User user, Role forbiddenRole) {
-        if (user.getRole().equals(forbiddenRole)) {
-            throw new SecurityException("권한이 없습니다.");
-        }
-    }
-
-    private void validateUserWorkspaceAccess(User user, Long boardListId) {
-        BoardList boardList = boardListRepository.findById(boardListId)
-                .orElseThrow(() -> new IllegalArgumentException("리스트를 찾을 수 없습니다."));
-
-        if (!boardList.getBoard().getWorkspace().getInvites().stream().anyMatch(invite -> invite.getInvitee().equals(user))) {
-            throw new SecurityException("워크스페이스에 접근할 권한이 없습니다.");
-        }
-    }
-
     private CardResponseDto mapToCardResponseDto(Card card) {
+
+        // attachmentRepository.findByCardId(cardId)
         List<CardAttachmentDto> attachments = card.getCardAttachments().stream()
                 .map(att -> new CardAttachmentDto(att.getId(), att.getImage(), att.getImageName(), att.getFileType()))
                 .collect(Collectors.toList());
 
+        //  commentsRepo.findByCardId(cardId)
 //        List<CommentResponseDtoDto> comments = card.getComments().stream()
 //                .map(c -> new CommentResponseDto(c.getId(), c.getContents(), c.getEmoji(), c.getUser().getName(), c.getCreatedAt()))
 //                .collect(Collectors.toList());
 
+
+        //
+
+        //  historyRepo.findByCardId(cardId)
         List<CardHistoryDto> histories = card.getCardHistories().stream()
                 .map(h -> new CardHistoryDto(h.getId(), h.getLogMessage(), h.getCreatedAt()))
                 .collect(Collectors.toList());
