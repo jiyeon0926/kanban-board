@@ -2,8 +2,6 @@ package onepick.kanban.workspace.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import onepick.kanban.exception.CustomException;
-import onepick.kanban.exception.ErrorCode;
 import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
 import onepick.kanban.workspace.dto.InviteRequestDto;
@@ -12,9 +10,11 @@ import onepick.kanban.workspace.entity.Status;
 import onepick.kanban.workspace.entity.Workspace;
 import onepick.kanban.workspace.repository.InviteRepository;
 import onepick.kanban.workspace.repository.WorkspaceRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,11 +32,11 @@ public class InviteService {
     @Transactional
     public void inviteMembers(Long workspaceId, InviteRequestDto requestDto) {
         if (requestDto.getEmails().isEmpty()) {
-            throw new CustomException(ErrorCode.INVALID_REQUEST, "이메일 목록이 비어있습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이메일 목록이 비어있습니다.");
         }
 
         Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_WORKSPACE_ID));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 워크스페이스 ID입니다."));
 
         // 토큰에 저장된 이메일 가져와서 관리자 찾기
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -57,14 +57,29 @@ public class InviteService {
     @Transactional
     public void updateInviteStatus(Long workspaceId, Long inviteId, String status) {
         Invite invite = inviteRepository.findById(inviteId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INVITEE_ID));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 초대 ID입니다."));
 
         if (!invite.getWorkspace().getId().equals(workspaceId)) {
-            throw new CustomException(ErrorCode.INVALID_WORKSPACE_ID);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 초대 ID입니다.");
         }
 
         if (!isInvitee(invite.getInvitee())) {
-            throw new CustomException(ErrorCode.INVALID_WORKSPACE_INVITEE);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "초대 받은 사용자가 아닙니다.");
+        }
+
+        // 수락 상태 -> 수락 || 거절 = "이미 수락된 상태입니다."
+        if (invite.getStatus() == Status.ACCEPTED) {
+            if (status.equals(Status.ACCEPTED.getName()) || status.equals(Status.REJECTED.getName())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 수락된 상태입니다.");
+            }
+            // 거절 상태 -> 수락 상태 변경시: "관리자에게 재요청 문의해주세요."
+        } else if (invite.getStatus() == Status.REJECTED) {
+            if (status.equals(Status.ACCEPTED.getName())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "관리자에게 재요청 문의해주세요.");
+            } else {
+                // 거절 상태 -> 거절 상태 변경시: "이미 거절된 상태입니다."
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 거절된 상태입니다.");
+            }
         }
 
         invite.changeStatus(status);
@@ -75,10 +90,10 @@ public class InviteService {
     @Transactional
     public void deleteInvite(Long workspaceId, Long inviteId) {
         Invite invite = inviteRepository.findById(inviteId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INVITEE_ID));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 초대 ID입니다."));
 
         if (!invite.getWorkspace().getId().equals(workspaceId)) {
-            throw new CustomException(ErrorCode.INVALID_WORKSPACE_ID);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 워크스페이스 ID입니다.");
         }
 
         inviteRepository.delete(invite);
