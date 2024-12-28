@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -17,4 +18,6 @@ public class CardRequestDto {
     private final String contents;
 
     private final LocalDateTime deadline;
+
+    private final List<Long> assigneeIds; // 다중 담당자 ID 추가
 }
