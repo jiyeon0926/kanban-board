@@ -5,10 +5,8 @@ import onepick.kanban.board.dto.BoardDetailResponseDto;
 import onepick.kanban.board.dto.BoardRequestDto;
 import onepick.kanban.board.dto.BoardResponseDto;
 import onepick.kanban.board.service.BoardService;
-import onepick.kanban.user.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,9 +34,10 @@ public class BoardController {
 
     // 보드 다건 조회
     @GetMapping
-    public ResponseEntity<List<BoardResponseDto>> getBoards(@PathVariable Long workspaceId,
-                                                            @AuthenticationPrincipal User user) {
-        List<BoardResponseDto> boards = boardService.getBoards(workspaceId, user);
+    public ResponseEntity<List<BoardResponseDto>> getBoards(
+            @PathVariable Long workspaceId) {
+
+        List<BoardResponseDto> boards = boardService.getBoards(workspaceId);
 
         return ResponseEntity.ok(boards);
     }
@@ -53,18 +52,18 @@ public class BoardController {
     // 보드 수정
     @PutMapping("/{boardId}")
     public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable Long boardId,
-                                                        @RequestBody BoardRequestDto requestDto,
-                                                        @AuthenticationPrincipal User user) {
-        BoardResponseDto board = boardService.updateBoard(boardId, requestDto, user);
+                                                        @RequestBody BoardRequestDto requestDto) {
+
+        BoardResponseDto board = boardService.updateBoard(boardId, requestDto);
 
         return ResponseEntity.ok(board);
     }
 
     // 보드 삭제
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId,
-                                            @AuthenticationPrincipal User user) {
-        boardService.deleteBoard(boardId, user);
+    public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId) {
+
+        boardService.deleteBoard(boardId);
 
         return ResponseEntity.noContent().build();
     }
