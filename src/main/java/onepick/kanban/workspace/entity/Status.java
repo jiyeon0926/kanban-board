@@ -6,9 +6,7 @@ import lombok.Getter;
 public enum Status {
     PENDING("pending"),
     ACCEPTED("accepted"),
-    REJECTED("rejected"),
-    EXPIRED("expired"),
-    CANCELLED("cancelled");
+    REJECTED("rejected");
 
     private final String name;
 

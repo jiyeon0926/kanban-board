@@ -40,8 +40,4 @@ public class Invite extends Timestamp {
     public void changeStatus(String newStatus) {
         this.status = Status.of(newStatus);
     }
-
-    public void changeCancelled() {
-        this.status = Status.CANCELLED;
-    }
 }

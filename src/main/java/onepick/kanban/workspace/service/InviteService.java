@@ -8,6 +8,7 @@ import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
 import onepick.kanban.workspace.dto.InviteRequestDto;
 import onepick.kanban.workspace.entity.Invite;
+import onepick.kanban.workspace.entity.Status;
 import onepick.kanban.workspace.entity.Workspace;
 import onepick.kanban.workspace.repository.InviteRepository;
 import onepick.kanban.workspace.repository.WorkspaceRepository;
@@ -70,9 +71,9 @@ public class InviteService {
         inviteRepository.save(invite);
     }
 
-    // 관리자가 초대 상태 수정
+    // 관리자가 초대 취소
     @Transactional
-    public void changeCancelled(Long workspaceId, Long inviteId) {
+    public void deleteInvite(Long workspaceId, Long inviteId) {
         Invite invite = inviteRepository.findById(inviteId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INVITEE_ID));
 
@@ -80,8 +81,7 @@ public class InviteService {
             throw new CustomException(ErrorCode.INVALID_WORKSPACE_ID);
         }
 
-        invite.changeCancelled();
-        inviteRepository.save(invite);
+        inviteRepository.delete(invite);
     }
 
     public boolean isInvitee(User invitee) {
