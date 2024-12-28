@@ -13,8 +13,8 @@ public class CardAttachment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String image;
-    private String imageName;
+    private String image; // S3 URL
+    private String imageName; // S3 Object Key
     private String fileType;
 
     @ManyToOne
