@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import onepick.kanban.card.entity.Card;
 import onepick.kanban.card.repository.CardRepository;
 import onepick.kanban.comment.dto.CommentRequestDto;
+import onepick.kanban.comment.dto.CommentResponseDto;
 import onepick.kanban.comment.entity.Comment;
 import onepick.kanban.comment.repository.CommentRepository;
 import onepick.kanban.common.SlackNotifier;
@@ -23,7 +24,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final SlackNotifier slackNotifier;
 
-    public Comment createComment(Long cardId, CommentRequestDto requestDto) {
+    public CommentResponseDto createComment(Long cardId, CommentRequestDto requestDto) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드를 찾을 수 없습니다."));
 
@@ -33,16 +34,17 @@ public class CommentService {
 
         String message = comment.getUser().getName() + " 멤버가 " + comment.getCard().getTitle() + " 카드에 댓글을 남겼습니다.";
         slackNotifier.sendNotification(message);
-
-        return commentRepository.save(comment);
+        commentRepository.save(comment);
+        return new CommentResponseDto(comment.getId(), comment.getUser().getName(), comment.getContents(), comment.getEmoji(), comment.getCard().getId(), comment.getCreatedAt(), comment.getModifiedAt());
     }
 
-    public Comment updateComment(Long commentId, CommentRequestDto requestDto) {
+    public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
 
         comment.update(requestDto.getContents(), requestDto.getEmoji());
-        return commentRepository.save(comment);
+        commentRepository.save(comment);
+        return new CommentResponseDto(comment.getId(), comment.getUser().getName(), comment.getContents(), comment.getEmoji(), comment.getCard().getId(), comment.getCreatedAt(), comment.getModifiedAt());
     }
 
     public void deleteComment(Long commentId) {

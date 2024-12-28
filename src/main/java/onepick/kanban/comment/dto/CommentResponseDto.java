@@ -1,22 +1,27 @@
 package onepick.kanban.comment.dto;
 
 import lombok.Getter;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDateTime;
 
 @Getter
 public class CommentResponseDto {
     private final Long id;
+    private final String name;
     private final String contents;
-    private final String user;
+    private final String emoji;
     private final Long cardId;
-    private final String createdAt;
-    private final String updatedAt;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime modifiedAt;
 
-    public CommentResponseDto(Long id, String contents, String user, Long cardId, String createdAt, String updatedAt) {
+    public CommentResponseDto(Long id, String name, String contents, String emoji, Long cardId, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
+        this.name = name;
         this.contents = contents;
-        this.user = user;
+        this.emoji = emoji;
         this.cardId = cardId;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.modifiedAt = modifiedAt;
     }
 }
