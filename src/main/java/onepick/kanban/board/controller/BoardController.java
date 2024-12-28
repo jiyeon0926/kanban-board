@@ -30,11 +30,8 @@ public class BoardController {
     // 보드 생성
     @PostMapping
     public ResponseEntity<BoardResponseDto> createBoard(@PathVariable Long workspaceId,
-                                                        @RequestBody BoardRequestDto requestDto,
-                                                        @AuthenticationPrincipal User user) {
-        BoardResponseDto board = boardService.createBoard(workspaceId, requestDto, user);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(board);
+                                                              @RequestBody BoardRequestDto requestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createBoard(workspaceId, requestDto));
     }
 
     // 보드 다건 조회
@@ -49,10 +46,8 @@ public class BoardController {
     // 보드 단건 조회
     @GetMapping("/{boardId}")
     public ResponseEntity<BoardDetailResponseDto> getBoard(@PathVariable Long workspaceId,
-                                                           @PathVariable Long boardId,
-                                                           @AuthenticationPrincipal User user) {
-        BoardDetailResponseDto board = boardService.getBoard(workspaceId, boardId, user);
-        return ResponseEntity.ok(board);
+                                                           @PathVariable Long boardId) {
+        return ResponseEntity.ok().body(boardService.getBoard(workspaceId, boardId));
     }
 
     // 보드 수정
