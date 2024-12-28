@@ -10,5 +10,5 @@ public class CardAttachmentDto {
     private final Long id;
     private final String image;
     private final String image_name;
-    private final String file_type;
+    private final String fileType;
 }
