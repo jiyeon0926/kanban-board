@@ -35,7 +35,7 @@ public class CommentService {
         String message = comment.getUser().getName() + " 멤버가 " + comment.getCard().getTitle() + " 카드에 댓글을 남겼습니다.";
         slackNotifier.sendNotification(message);
         commentRepository.save(comment);
-        return new CommentResponseDto(comment.getId(), comment.getContents(), comment.getUser().getName(), comment.getCard().getId(), comment.getCreatedAt(), comment.getModifiedAt());
+        return new CommentResponseDto(comment.getId(), comment.getUser().getName(), comment.getContents(), comment.getEmoji(), comment.getCard().getId(), comment.getCreatedAt(), comment.getModifiedAt());
     }
 
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto) {
@@ -44,7 +44,7 @@ public class CommentService {
 
         comment.update(requestDto.getContents(), requestDto.getEmoji());
         commentRepository.save(comment);
-        return new CommentResponseDto(comment.getId(), comment.getContents(), comment.getUser().getName(), comment.getCard().getId(), comment.getCreatedAt(), comment.getModifiedAt());
+        return new CommentResponseDto(comment.getId(), comment.getUser().getName(), comment.getContents(), comment.getEmoji(), comment.getCard().getId(), comment.getCreatedAt(), comment.getModifiedAt());
     }
 
     public void deleteComment(Long commentId) {
