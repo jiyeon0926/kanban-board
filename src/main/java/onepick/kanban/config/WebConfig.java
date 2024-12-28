@@ -48,8 +48,10 @@ public class WebConfig {
                                         DispatcherType.ERROR).permitAll()
                                 .requestMatchers("/admins/**").hasRole("ADMIN")
                                 .requestMatchers("/staffs/**").hasRole("STAFF")
-                                .requestMatchers(HttpMethod.GET, "/workspaces/**", "/boards/**", "/cards/**").hasAuthority("READONLY")
-                                .requestMatchers("/users/**").hasRole("READONLY")
+                                .requestMatchers(HttpMethod.POST, "/workspaces/**", "/boards/**", "/cards/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.PATCH, "/workspaces/**", "/boards/**", "/cards/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.PUT, "/workspaces/**", "/boards/**", "/cards/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.DELETE, "/workspaces/**", "/boards/**", "/cards/**").hasRole("USER")
                                 .anyRequest().authenticated()
                 )
                 // Spring Security 예외에 대한 처리를 핸들러에 위임
