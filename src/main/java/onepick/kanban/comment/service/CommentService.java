@@ -27,7 +27,7 @@ public class CommentService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드를 찾을 수 없습니다."));
 
-        Optional<User> user = userRepository.findById(card.getUser().getId());
+        Optional<User> user = userRepository.findById(card.getId());
 
         Comment comment = new Comment(card, user.get(), requestDto.getContents(), requestDto.getEmoji());
 
