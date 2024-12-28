@@ -10,10 +10,8 @@ import onepick.kanban.comment.repository.CommentRepository;
 import onepick.kanban.common.SlackNotifier;
 import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +26,10 @@ public class CommentService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드를 찾을 수 없습니다."));
 
-        Optional<User> user = userRepository.findById(card.getId());
+        User user = userRepository.findById(card.getId())
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-        Comment comment = new Comment(card, user.get(), requestDto.getContents(), requestDto.getEmoji());
+        Comment comment = new Comment(card, user, requestDto.getContents(), requestDto.getEmoji());
 
         String message = comment.getUser().getName() + " 멤버가 " + comment.getCard().getTitle() + " 카드에 댓글을 남겼습니다.";
         slackNotifier.sendNotification(message);
