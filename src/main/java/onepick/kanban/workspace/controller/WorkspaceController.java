@@ -61,4 +61,13 @@ public class WorkspaceController {
         inviteService.updateInviteStatus(workspaceId, inviteId, status);
         return ResponseEntity.ok().body("초대 상태가 성공적으로 업데이트되었습니다.");
     }
+
+    // 멤버 초대 취소
+    @DeleteMapping("/{workspaceId}/invites/{inviteId}")
+    public ResponseEntity<String> deleteInvite(
+            @PathVariable Long workspaceId,
+            @PathVariable Long inviteId) {
+        inviteService.deleteInvite(workspaceId, inviteId);
+        return ResponseEntity.ok().body("관리자가 초대 취소를 하였습니다.");
+    }
 }

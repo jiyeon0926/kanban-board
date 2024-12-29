@@ -123,7 +123,15 @@ public class InviteService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 워크스페이스 ID입니다.");
         }
 
-        inviteRepository.delete(invite);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String authEmail = auth.getName();
+        Optional<User> inviter = userRepository.findByEmail(authEmail);
+
+        Optional<Member> member = memberService.findByWorkspaceIdAndUserId(workspaceId, inviter.get().getId());
+
+        if (member.get().getRole().equals(Role.STAFF) || inviter.get().getRole().equals(Role.ADMIN)) {
+            inviteRepository.delete(invite);
+        }
     }
 
     private Workspace getWorkspace(Long workspaceId, List<String> emails) {
