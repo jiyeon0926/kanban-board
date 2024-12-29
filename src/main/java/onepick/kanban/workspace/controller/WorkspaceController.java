@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/workspaces")
 @RequiredArgsConstructor
-public class UserWorkspaceController {
+public class WorkspaceController {
 
     private final WorkspaceService workspaceService;
     private final InviteService inviteService;
@@ -45,10 +45,10 @@ public class UserWorkspaceController {
 
     // 멤버 초대
     @PostMapping("/{workspaceId}/invite")
-    public ResponseEntity<String> inviteMembers(
+    public ResponseEntity<String> inviteMembersByStaff(
             @PathVariable Long workspaceId,
             @Valid @RequestBody InviteRequestDto requestDto) {
-        inviteService.inviteMembers(workspaceId, requestDto);
+        inviteService.inviteMembersByStaff(workspaceId, requestDto.getEmails());
         return ResponseEntity.status(HttpStatus.CREATED).body("초대를 요청하였습니다.");
     }
 

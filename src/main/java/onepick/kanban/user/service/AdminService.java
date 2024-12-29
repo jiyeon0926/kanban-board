@@ -7,12 +7,17 @@ import onepick.kanban.user.dto.MemberResponseDto;
 import onepick.kanban.user.entity.Member;
 import onepick.kanban.user.entity.Role;
 import onepick.kanban.user.repository.MemberRepository;
+import onepick.kanban.workspace.dto.WorkspaceRequestDto;
+import onepick.kanban.workspace.dto.WorkspaceResponseDto;
 import onepick.kanban.workspace.entity.Workspace;
+import onepick.kanban.workspace.service.InviteService;
 import onepick.kanban.workspace.service.WorkspaceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +25,23 @@ public class AdminService {
 
     private final MemberRepository memberRepository;
     private final WorkspaceService workspaceService;
+    private final InviteService inviteService;
     private final SlackNotifier slackNotifier;
+
+    @Transactional
+    public WorkspaceResponseDto createWorkspace(WorkspaceRequestDto requestDto) {
+        Workspace workspace = workspaceService.createWorkspace(requestDto.getTitle(), requestDto.getContents());
+
+        String message = workspace.getTitle() + " 워크스페이스가 생성되었습니다.";
+        slackNotifier.sendNotification(message);
+
+        return new WorkspaceResponseDto(workspace.getId(), workspace.getTitle(), workspace.getContents());
+    }
+
+    @Transactional
+    public void inviteMembersByAdmin(Long workspaceId, List<String> emails) {
+        inviteService.inviteMembersByAdmin(workspaceId, emails);
+    }
 
     @Transactional
     public MemberRoleResponseDto updateRole(Long workspaceId, Long memberId, String role) {
