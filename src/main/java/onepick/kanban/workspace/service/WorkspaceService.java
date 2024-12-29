@@ -60,4 +60,8 @@ public class WorkspaceService {
 
         workspaceRepository.delete(workspace);
     }
+
+    public Workspace findMemberByWorkspaceId(Long workspaceId) {
+       return workspaceRepository.findMemberByWorkspaceId(workspaceId);
+    }
 }

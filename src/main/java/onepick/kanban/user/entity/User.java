@@ -43,8 +43,4 @@ public class User extends Timestamp {
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
-
-    public void updateRole(String role) {
-        this.role = Role.of(role);
-    }
 }

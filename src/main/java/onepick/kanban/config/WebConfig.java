@@ -47,11 +47,6 @@ public class WebConfig {
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE,
                                         DispatcherType.ERROR).permitAll()
                                 .requestMatchers("/admins/**").hasRole("ADMIN")
-                                .requestMatchers("/staffs/**").hasRole("STAFF")
-                                .requestMatchers(HttpMethod.POST, "/workspaces/**", "/boards/**", "/cards/**").hasRole("USER")
-                                .requestMatchers(HttpMethod.PATCH, "/workspaces/**", "/boards/**", "/cards/**").hasRole("USER")
-                                .requestMatchers(HttpMethod.PUT, "/workspaces/**", "/boards/**", "/cards/**").hasRole("USER")
-                                .requestMatchers(HttpMethod.DELETE, "/workspaces/**", "/boards/**", "/cards/**").hasRole("USER")
                                 .anyRequest().authenticated()
                 )
                 // Spring Security 예외에 대한 처리를 핸들러에 위임
@@ -72,9 +67,7 @@ public class WebConfig {
     public RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl.fromHierarchy(
                     """
-                    ROLE_ADMIN > ROLE_STAFF
-                    ROLE_STAFF > ROLE_USER
-                    ROLE_USER > ROLE_READONLY
+                    ROLE_ADMIN > ROLE_USER
                     """);
     }
 }

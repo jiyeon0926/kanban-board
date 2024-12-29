@@ -6,10 +6,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
-public class RoleRequestDto {
+public class MemberRoleRequestDto {
 
     @NotBlank(message = "지정할 권한을 입력해주세요.")
     @Size(max = 10)
-    @Pattern(regexp = "^(user|staff|readonly)$", message = "admin 권한으로 지정할 수 없습니다.")
+    @Pattern(regexp = "^(member|staff|readonly)$", message = "admin 권한으로 지정할 수 없습니다.")
     private String role;
 }

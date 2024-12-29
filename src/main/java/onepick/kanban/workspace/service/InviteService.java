@@ -2,8 +2,11 @@ package onepick.kanban.workspace.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import onepick.kanban.user.entity.Member;
+import onepick.kanban.user.entity.Role;
 import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
+import onepick.kanban.user.service.MemberService;
 import onepick.kanban.workspace.dto.InviteRequestDto;
 import onepick.kanban.workspace.entity.Invite;
 import onepick.kanban.workspace.entity.Status;
@@ -27,6 +30,7 @@ public class InviteService {
     private final InviteRepository inviteRepository;
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
+    private final MemberService memberService;
 
     // 멤버 초대
     @Transactional
@@ -68,12 +72,12 @@ public class InviteService {
         }
 
         // 수락 상태 -> 수락 || 거절 = "이미 수락된 상태입니다."
-        if (invite.getStatus() == Status.ACCEPTED) {
+        if (invite.getStatus().equals(Status.ACCEPTED)) {
             if (status.equals(Status.ACCEPTED.getName()) || status.equals(Status.REJECTED.getName())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 수락된 상태입니다.");
             }
             // 거절 상태 -> 수락 상태 변경시: "관리자에게 재요청 문의해주세요."
-        } else if (invite.getStatus() == Status.REJECTED) {
+        } else if (invite.getStatus().equals(Status.REJECTED)) {
             if (status.equals(Status.ACCEPTED.getName())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "관리자에게 재요청 문의해주세요.");
             } else {
@@ -84,6 +88,10 @@ public class InviteService {
 
         invite.changeStatus(status);
         inviteRepository.save(invite);
+
+        if (invite.getStatus().equals(Status.ACCEPTED)) {
+            memberService.save(new Member(invite.getWorkspace(), invite.getInvitee()));
+        }
     }
 
     // 관리자가 초대 취소
