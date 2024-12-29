@@ -17,21 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class AdminWorkspaceController {
 
     private final WorkspaceService workspaceService;
-    private final InviteService inviteService;
 
     // 워크스페이스 생성
     @PostMapping
     public ResponseEntity<WorkspaceResponseDto> createWorkspace(@Valid @RequestBody WorkspaceRequestDto requestDto) {
         WorkspaceResponseDto responseDto = workspaceService.createWorkspace(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-    }
-
-    // 멤버 초대
-    @PostMapping("/{workspaceId}/invite")
-    public ResponseEntity<String> inviteMembers(
-            @PathVariable Long workspaceId,
-            @Valid @RequestBody InviteRequestDto requestDto) {
-        inviteService.inviteMembers(workspaceId, requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("초대를 요청하였습니다.");
     }
 }
