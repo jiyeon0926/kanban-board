@@ -35,7 +35,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body("관리자가 초대를 요청하였습니다.");
     }
 
-    // admin 관리자가 member 권한 지정
+    // admin 관리자가 member의 권한을 지정
     @PutMapping("/workspaces/{workspaceId}/members/{memberId}/role")
     public ResponseEntity<MemberRoleResponseDto> updateRole(@PathVariable Long workspaceId,
                                                             @PathVariable Long memberId,
@@ -43,7 +43,7 @@ public class AdminController {
         return ResponseEntity.ok().body(adminService.updateRole(workspaceId, memberId, memberRoleRequestDto.getRole()));
     }
 
-    // 권한 포함 워크스페이스별 멤버 단건 조회
+    // 워크스페이스의 멤버 전체 조회
     @GetMapping("/workspaces/{workspaceId}/members")
     public ResponseEntity<MemberResponseDto> findMemberByWorkspaceId(@PathVariable Long workspaceId) {
         return ResponseEntity.ok().body(adminService.findMemberByWorkspaceId(workspaceId));
