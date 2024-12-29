@@ -17,7 +17,7 @@ public class Member extends Timestamp {
 
     @Column(nullable = false, length = 10)
     @Enumerated(value = EnumType.STRING)
-    private Role role = Role.Member;
+    private Role role = Role.MEMBER;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id")
