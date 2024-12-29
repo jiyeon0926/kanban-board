@@ -43,6 +43,15 @@ public class UserWorkspaceController {
         return ResponseEntity.ok(responseDtos);
     }
 
+    // 멤버 초대
+    @PostMapping("/{workspaceId}/invite")
+    public ResponseEntity<String> inviteMembers(
+            @PathVariable Long workspaceId,
+            @Valid @RequestBody InviteRequestDto requestDto) {
+        inviteService.inviteMembers(workspaceId, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body("초대를 요청하였습니다.");
+    }
+
     // 멤버 초대 상태 수정 (accepted, rejected)
     @PatchMapping("/{workspaceId}/invites/{inviteId}")
     public ResponseEntity<String> updateInviteStatus(
