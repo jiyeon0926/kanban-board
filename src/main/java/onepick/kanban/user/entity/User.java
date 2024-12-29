@@ -5,9 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import onepick.kanban.common.Timestamp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @NoArgsConstructor
@@ -29,9 +26,6 @@ public class User extends Timestamp {
     @Column(nullable = false, length = 10)
     @Enumerated(value = EnumType.STRING)
     private Role role;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<Member> members = new ArrayList<>();
 
     private boolean isDeleted = false;
 
