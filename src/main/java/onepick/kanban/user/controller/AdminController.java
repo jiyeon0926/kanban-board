@@ -2,32 +2,31 @@ package onepick.kanban.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import onepick.kanban.user.dto.RoleRequestDto;
-import onepick.kanban.user.dto.RoleResponseDto;
-import onepick.kanban.user.dto.UserResponseDto;
+import onepick.kanban.user.dto.MemberRoleRequestDto;
+import onepick.kanban.user.dto.MemberRoleResponseDto;
+import onepick.kanban.user.dto.MemberResponseDto;
 import onepick.kanban.user.service.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/admins/users")
+@RequestMapping("/admins")
 @RequiredArgsConstructor
 public class AdminController {
 
     private final AdminService adminService;
 
     // 관리자가 권한 지정
-    @PutMapping("/{userId}/role")
-    public ResponseEntity<RoleResponseDto> updateRole(@PathVariable Long userId,
-                                                      @Valid @RequestBody RoleRequestDto roleRequestDto) {
-        return ResponseEntity.ok().body(adminService.updateRole(userId, roleRequestDto.getRole()));
+    @PutMapping("/workspaces/{workspaceId}/members/{memberId}/role")
+    public ResponseEntity<MemberRoleResponseDto> updateRole(@PathVariable Long workspaceId,
+                                                            @PathVariable Long memberId,
+                                                            @Valid @RequestBody MemberRoleRequestDto memberRoleRequestDto) {
+        return ResponseEntity.ok().body(adminService.updateRole(workspaceId, memberId, memberRoleRequestDto.getRole()));
     }
 
-    // 사용자 다건 조회
-    @GetMapping
-    public ResponseEntity<List<UserResponseDto>> findAll() {
-        return ResponseEntity.ok().body(adminService.findAll());
+    // 권한 포함 워크스페이스별 멤버 다건 조회
+    @GetMapping("/workspaces/{workspaceId}/members")
+    public ResponseEntity<MemberResponseDto> findMemberByWorkspaceId(@PathVariable Long workspaceId) {
+        return ResponseEntity.ok().body(adminService.findMemberByWorkspaceId(workspaceId));
     }
 }
