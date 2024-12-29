@@ -9,6 +9,7 @@ import onepick.kanban.user.entity.Role;
 import onepick.kanban.user.repository.MemberRepository;
 import onepick.kanban.workspace.dto.WorkspaceRequestDto;
 import onepick.kanban.workspace.dto.WorkspaceResponseDto;
+import onepick.kanban.workspace.entity.Invite;
 import onepick.kanban.workspace.entity.Workspace;
 import onepick.kanban.workspace.service.InviteService;
 import onepick.kanban.workspace.service.WorkspaceService;
@@ -60,6 +61,11 @@ public class AdminService {
         }
 
         return MemberRoleResponseDto.toDto(member);
+    }
+
+    @Transactional
+    public void deleteInviteByAdmin(Long workspaceId, Long inviteId) {
+        inviteService.deleteInviteByAdmin(workspaceId, inviteId);
     }
 
     public MemberResponseDto findMemberByWorkspaceId(Long workspaceId) {
