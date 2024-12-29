@@ -67,7 +67,7 @@ public class WorkspaceController {
     public ResponseEntity<String> deleteInvite(
             @PathVariable Long workspaceId,
             @PathVariable Long inviteId) {
-        inviteService.deleteInvite(workspaceId, inviteId);
+        inviteService.deleteInviteByStaff(workspaceId, inviteId);
         return ResponseEntity.ok().body("관리자가 초대 취소를 하였습니다.");
     }
 }
