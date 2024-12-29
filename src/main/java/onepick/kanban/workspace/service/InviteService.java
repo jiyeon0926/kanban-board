@@ -2,6 +2,7 @@ package onepick.kanban.workspace.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import onepick.kanban.common.SlackNotifier;
 import onepick.kanban.user.entity.Member;
 import onepick.kanban.user.entity.Role;
 import onepick.kanban.user.entity.User;
@@ -31,6 +32,7 @@ public class InviteService {
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
     private final MemberService memberService;
+    private final SlackNotifier slackNotifier;
 
     // admin 관리자가 멤버 초대
     @Transactional
@@ -50,6 +52,9 @@ public class InviteService {
                 .collect(Collectors.toList());
 
         inviteRepository.saveAll(invites);
+
+        String message = inviter.get().getName() + " 관리자가 " + workspace.getTitle() + " 워크스페이스 멤버 초대를 하였습니다.";
+        slackNotifier.sendNotification(message);
     }
 
     // admin 관리자가 아닌 member 중 워크스페이스 관리자로 지정받은 사람이 멤버 초대
@@ -71,6 +76,9 @@ public class InviteService {
                     .collect(Collectors.toList());
 
             inviteRepository.saveAll(invites);
+
+            String message = inviter.get().getName() + " 관리자가 " + workspace.getTitle() + " 워크스페이스 멤버 초대를 하였습니다.";
+            slackNotifier.sendNotification(message);
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "초대 권한이 없습니다.");
         }
