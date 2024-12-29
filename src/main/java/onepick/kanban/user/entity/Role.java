@@ -11,7 +11,7 @@ public enum Role {
     USER("user"),
     ADMIN("admin"),
     STAFF("staff"),
-    Member("member"),
+    MEMBER("member"),
     READONLY("readonly");
 
     private final String name;
