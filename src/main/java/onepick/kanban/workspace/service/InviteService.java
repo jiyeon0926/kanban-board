@@ -32,29 +32,48 @@ public class InviteService {
     private final UserRepository userRepository;
     private final MemberService memberService;
 
-    // 멤버 초대
+    // admin 관리자가 멤버 초대
     @Transactional
-    public void inviteMembers(Long workspaceId, InviteRequestDto requestDto) {
-        if (requestDto.getEmails().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이메일 목록이 비어있습니다.");
-        }
+    public void inviteMembersByAdmin(Long workspaceId, List<String> emails) {
+        Workspace workspace = getWorkspace(workspaceId, emails);
 
-        Workspace workspace = workspaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 워크스페이스 ID입니다."));
-
-        // 토큰에 저장된 이메일 가져와서 관리자 찾기
+        // 관리자가 초대할 경우, 토큰에 저장된 이메일 가져와서 관리자 찾기
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String authEmail = auth.getName();
         Optional<User> inviter = userRepository.findByEmail(authEmail);
 
         // 요청한 이메일을 기반으로 멤버 찾기
-        List<User> invitees = userRepository.findAllByEmailIn(requestDto.getEmails());
+        List<User> invitees = userRepository.findAllByEmailIn(emails);
 
         List<Invite> invites = invitees.stream()
                 .map(invitee -> new Invite(workspace, inviter.get(), invitee))
                 .collect(Collectors.toList());
 
         inviteRepository.saveAll(invites);
+    }
+
+    // admin 관리자가 아닌 member 중 워크스페이스 관리자로 지정받은 사람이 멤버 초대
+    @Transactional
+    public void inviteMembersByStaff(Long workspaceId, List<String> emails) {
+        Workspace workspace = getWorkspace(workspaceId, emails);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String authEmail = auth.getName();
+        Optional<User> inviter = userRepository.findByEmail(authEmail);
+
+        Optional<Member> member = memberService.findByWorkspaceIdAndUserId(workspaceId, inviter.get().getId());
+
+        if (member.get().getRole().equals(Role.STAFF)) {
+            List<User> invitees = userRepository.findAllByEmailIn(emails);
+
+            List<Invite> invites = invitees.stream()
+                    .map(invitee -> new Invite(workspace, inviter.get(), invitee))
+                    .collect(Collectors.toList());
+
+            inviteRepository.saveAll(invites);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "초대 권한이 없습니다.");
+        }
     }
 
     // 초대 받은 사용자가 초대 상태 수정
@@ -105,6 +124,16 @@ public class InviteService {
         }
 
         inviteRepository.delete(invite);
+    }
+
+    private Workspace getWorkspace(Long workspaceId, List<String> emails) {
+        if (emails.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이메일 목록이 비어있습니다.");
+        }
+
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 워크스페이스 ID입니다."));
+        return workspace;
     }
 
     public boolean isInvitee(User invitee) {

@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
@@ -15,4 +17,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("SELECT m FROM Member m INNER JOIN FETCH m.workspace w WHERE w.id = :workspaceId AND m.id = :memberId")
     Member findByWorkspaceIdAndMemberId(@Param("workspaceId") Long workspaceId, @Param("memberId") Long memberId);
+
+    Optional<Member> findByWorkspaceIdAndUserId(Long workspaceId, Long userId);
 }
