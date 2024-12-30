@@ -92,26 +92,19 @@ public class InviteService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "초대 받은 사용자가 아닙니다.");
         }
 
-        // 수락 상태 -> 수락 || 거절 = "이미 수락된 상태입니다."
         if (invite.getStatus().equals(Status.ACCEPTED)) {
             if (status.equals(Status.ACCEPTED.getName()) || status.equals(Status.REJECTED.getName())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 수락된 상태입니다.");
             }
-            // 거절 상태 -> 수락 상태 변경시: "관리자에게 재요청 문의해주세요."
-        } else if (invite.getStatus().equals(Status.REJECTED)) {
-            if (status.equals(Status.ACCEPTED.getName())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "관리자에게 재요청 문의해주세요.");
-            } else {
-                // 거절 상태 -> 거절 상태 변경시: "이미 거절된 상태입니다."
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 거절된 상태입니다.");
-            }
         }
 
-        invite.changeStatus(status);
-        inviteRepository.save(invite);
-
-        if (invite.getStatus().equals(Status.ACCEPTED)) {
+        if (status.equals(Status.ACCEPTED.getName())) {
+            invite.changeStatus(status);
+            inviteRepository.save(invite);
             memberService.save(new Member(invite.getWorkspace(), invite.getInvitee()));
+        } else if (status.equals(Status.REJECTED.getName())) {
+            inviteRepository.delete(invite);
+            return;
         }
     }
 
