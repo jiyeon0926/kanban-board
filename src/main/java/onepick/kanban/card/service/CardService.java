@@ -1,6 +1,7 @@
 package onepick.kanban.card.service;
 
 import lombok.RequiredArgsConstructor;
+import onepick.kanban.board.entity.Board;
 import onepick.kanban.board.repository.BoardRepository;
 import onepick.kanban.boardlist.entity.BoardList;
 import onepick.kanban.boardlist.repository.BoardListRepository;
@@ -9,6 +10,7 @@ import onepick.kanban.card.dto.CardHistoryDto;
 import onepick.kanban.card.dto.CardRequestDto;
 import onepick.kanban.card.dto.CardResponseDto;
 import onepick.kanban.card.entity.Card;
+import onepick.kanban.card.entity.CardAttachment;
 import onepick.kanban.card.entity.CardHistory;
 import onepick.kanban.card.repository.CardAttachmentRepository;
 import onepick.kanban.card.repository.CardHistoryRepository;
@@ -19,10 +21,15 @@ import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +46,8 @@ public class CardService {
 
     @Transactional
     public CardResponseDto createCard(Long boardId, Long listId, CardRequestDto requestDto) {
-        boardRepository.findById(boardId)
+
+        Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("보드를 찾을 수 없습니다."));
 
         BoardList boardList = boardListRepository.findById(listId)
@@ -57,6 +65,19 @@ public class CardService {
 
         Card card = new Card(boardList, assignees, requestDto.getTitle(), requestDto.getContents(), requestDto.getDeadline());
         cardRepository.save(card);
+
+        // 첨부 파일 URL 처리
+        if (requestDto.getAttachmentUrls() != null && !requestDto.getAttachmentUrls().isEmpty()) {
+            List<CardAttachment> attachments = requestDto.getAttachmentUrls().stream()
+                    .map(url -> {
+                        String imageName = extractFileNameFromUrl(url);
+                        String fileType = determineFileType(imageName);
+                        return new CardAttachment(card, url, imageName, fileType);
+                    })
+                    .collect(Collectors.toList());
+            cardAttachmentRepository.saveAll(attachments);
+            card.getCardAttachments().addAll(attachments);
+        }
 
         String message = boardList.getTitle() + " 리스트의 " + card.getTitle() + " 카드가 생성되었습니다.";
         slackNotifier.sendNotification(message);
@@ -78,6 +99,7 @@ public class CardService {
 
     @Transactional(readOnly = true)
     public CardResponseDto getCard(Long cardId) {
+
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new NoSuchElementException("카드를 찾을 수 없습니다."));
 
@@ -111,6 +133,26 @@ public class CardService {
         cardRepository.delete(card);
     }
 
+    // S3 URL에서 파일 이름을 추출
+    private String extractFileNameFromUrl(String url) {
+        try {
+            URI uri = new URI(url);
+            String path =uri.getPath();
+
+            return Paths.get(path).getFileName().toString();
+        } catch (URISyntaxException exception) {
+            throw new IllegalArgumentException("유효하지 않은 URL입니다.");
+        }
+    }
+
+    // 파일 이름에서 확장자 추출
+    private String determineFileType(String fileName) {
+        String extension = StringUtils.getFilenameExtension(fileName);
+
+        return extension != null ? extension.toLowerCase() : "unknown";
+    }
+
+    // 카드 엔티티를 응답 DTO로 Mapping
     private CardResponseDto mapToCardResponseDto(Card card) {
 
         List<CardAttachmentDto> attachments = card.getCardAttachments().stream()
