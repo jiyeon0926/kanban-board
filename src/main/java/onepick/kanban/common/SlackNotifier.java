@@ -17,8 +17,8 @@ public class SlackNotifier {
     }
 
     public void sendNotification(String message) {
-        String payload = "{\"channel\": \"#one-pick\", \"username\": \"webhookbot\", \"text\": \""
-                + message + "\", \"icon_emoji\": \":ghost:\"}";
+        String payload = "{\"channel\": \"#one-pick\", \"username\": \"은영bot\", \"text\": \""
+                + message + "\", \"icon_emoji\": \":fairy:\"}";
         restTemplate.postForEntity(url, payload, String.class);
     }
 }
