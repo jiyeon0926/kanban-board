@@ -36,4 +36,8 @@ public class Invite extends Timestamp {
         this.inviter = inviter;
         this.invitee = invitee;
     }
+
+    public void changeStatus(String newStatus) {
+        this.status = Status.of(newStatus);
+    }
 }

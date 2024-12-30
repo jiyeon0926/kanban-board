@@ -14,7 +14,7 @@ public class User extends Timestamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 320)
     private String email;
 
     @Column(nullable = false, length = 100)
@@ -34,5 +34,13 @@ public class User extends Timestamp {
         this.password = password;
         this.name = name;
         this.role = Role.of(role);
+    }
+
+    public void updateIsDeleted() {
+        this.isDeleted = true;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
     }
 }

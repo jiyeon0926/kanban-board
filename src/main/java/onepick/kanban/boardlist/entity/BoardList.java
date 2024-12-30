@@ -22,22 +22,33 @@ public class BoardList extends Timestamp {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
     private String contents;
 
-    @Column(nullable = false, columnDefinition = "INT DEFAULT 1")
-    private Integer order;
+    private Integer sequence = 1;
 
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @OneToMany(mappedBy = "board_list", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "boardList", cascade = CascadeType.REMOVE)
     private List<Card> cards = new ArrayList<>();
 
     public BoardList(Board board, String title, String contents) {
         this.board = board;
         this.title =title;
         this.contents = contents;
+    }
+
+    public void update(String title, String contents) {
+        this.title = title;
+        this.contents = contents;
+    }
+
+    public void addSequence() {
+        this.sequence++;
+    }
+
+    public void updateSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 }

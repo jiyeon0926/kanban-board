@@ -1,6 +1,7 @@
 package onepick.kanban.card.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import onepick.kanban.boardlist.entity.BoardList;
@@ -27,7 +28,7 @@ public class Card extends Timestamp {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String contents;
 
-    private Integer order = 1;
+    private Integer sequence = 1;
 
     @Column(nullable = false)
     private LocalDateTime deadline;
@@ -36,9 +37,14 @@ public class Card extends Timestamp {
     @JoinColumn(name = "list_id")
     private BoardList boardList;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    // 다중 사용자로 변경
+    @ManyToMany
+    @JoinTable(
+            name = "card_assignees",
+            joinColumns = @JoinColumn(name = "card_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> assignees = new ArrayList<>();
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
@@ -46,11 +52,29 @@ public class Card extends Timestamp {
     @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
     private List<CardAttachment> cardAttachments = new ArrayList<>();
 
-    public Card(BoardList boardList, User user, String title, String contents, LocalDateTime deadline) {
+    @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
+    private List<CardHistory> cardHistories = new ArrayList<>();
+
+    public Card(BoardList boardList, List<User> assignees, String title, String contents, LocalDateTime deadline) {
         this.boardList = boardList;
-        this.user = user;
-        this.title =title;
+        this.assignees = assignees;
+        this.title = title;
         this.contents = contents;
         this.deadline = deadline;
+    }
+
+    public void updateCard(String title, String contents, LocalDateTime deadline, List<User> assignees) {
+        if (title != null && !title.isEmpty()) {
+            this.title = title;
+        }
+        if (contents != null) {
+            this.contents = contents;
+        }
+        if (deadline != null) {
+            this.deadline = deadline;
+        }
+        if (assignees != null && !assignees.isEmpty()) {
+            this.assignees = assignees;
+        }
     }
 }

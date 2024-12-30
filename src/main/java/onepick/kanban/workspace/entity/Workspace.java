@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import onepick.kanban.board.entity.Board;
 import onepick.kanban.common.Timestamp;
+import onepick.kanban.user.entity.Member;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,16 @@ public class Workspace extends Timestamp {
     @OneToMany(mappedBy = "workspace", cascade = CascadeType.REMOVE)
     private List<Invite> invites = new ArrayList<>();
 
+    @OneToMany(mappedBy = "workspace", cascade = CascadeType.REMOVE)
+    private List<Member> members = new ArrayList<>();
+
+
     public Workspace(String title, String contents) {
+        this.title = title;
+        this.contents = contents;
+    }
+
+    public void update(String title, String contents) {
         this.title = title;
         this.contents = contents;
     }

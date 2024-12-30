@@ -1,13 +1,17 @@
 package onepick.kanban.user.entity;
 
 import lombok.Getter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.List;
 
 @Getter
 public enum Role {
 
     USER("user"),
     ADMIN("admin"),
-    WORKSPACEADMIN("workspaceadmin"),
+    STAFF("staff"),
+    MEMBER("member"),
     READONLY("readonly");
 
     private final String name;
@@ -24,5 +28,10 @@ public enum Role {
         }
 
         throw new IllegalArgumentException("해당하는 이름의 권한을 찾을 수 없습니다: " + roleName);
+    }
+
+    // 권한 리스트
+    public List<SimpleGrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.name()));
     }
 }
