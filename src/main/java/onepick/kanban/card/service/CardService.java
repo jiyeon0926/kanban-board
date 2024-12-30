@@ -10,7 +10,6 @@ import onepick.kanban.card.dto.CardHistoryDto;
 import onepick.kanban.card.dto.CardRequestDto;
 import onepick.kanban.card.dto.CardResponseDto;
 import onepick.kanban.card.entity.Card;
-import onepick.kanban.card.entity.CardAttachment;
 import onepick.kanban.card.entity.CardHistory;
 import onepick.kanban.card.repository.CardAttachmentRepository;
 import onepick.kanban.card.repository.CardHistoryRepository;
@@ -21,11 +20,7 @@ import onepick.kanban.user.entity.User;
 import onepick.kanban.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -43,6 +38,7 @@ public class CardService {
     private final SlackNotifier slackNotifier;
     private final CardHistoryService cardHistoryService;
     private final BoardRepository boardRepository;
+    private final CardAttachmentService cardAttachmentService;
 
     @Transactional
     public CardResponseDto createCard(Long boardId, Long listId, CardRequestDto requestDto) {
@@ -66,17 +62,10 @@ public class CardService {
         Card card = new Card(boardList, assignees, requestDto.getTitle(), requestDto.getContents(), requestDto.getDeadline());
         cardRepository.save(card);
 
-        // 첨부 파일 URL 처리
-        if (requestDto.getAttachmentUrls() != null && !requestDto.getAttachmentUrls().isEmpty()) {
-            List<CardAttachment> attachments = requestDto.getAttachmentUrls().stream()
-                    .map(url -> {
-                        String imageName = extractFileNameFromUrl(url);
-                        String fileType = determineFileType(imageName);
-                        return new CardAttachment(card, url, imageName, fileType);
-                    })
-                    .collect(Collectors.toList());
-            cardAttachmentRepository.saveAll(attachments);
-            card.getCardAttachments().addAll(attachments);
+        // 첨부 파일 처리: 실제 파일을 CardAttachmentService로 전달
+        if (requestDto.getAttachments() != null && !requestDto.getAttachments().isEmpty()) {
+            List<CardAttachmentDto> attachmentDtos = cardAttachmentService.createAttachments(card.getId(), requestDto.getAttachments());
+            // 필요 시 CardResponseDto에 첨부파일 추가 (이미 CardResponseDto에 포함되어 있음)
         }
 
         String message = boardList.getTitle() + " 리스트의 " + card.getTitle() + " 카드가 생성되었습니다.";
@@ -120,6 +109,12 @@ public class CardService {
         card.updateCard(requestDto.getTitle(), requestDto.getContents(), requestDto.getDeadline(), assignees);
         Card savedCard = cardRepository.save(card);
 
+        // 첨부 파일 처리 (업데이트 시 새로운 파일 추가)
+        if (requestDto.getAttachments() != null && !requestDto.getAttachments().isEmpty()) {
+            List<CardAttachmentDto> attachmentDtos = cardAttachmentService.createAttachments(card.getId(), requestDto.getAttachments());
+            // 필요 시 기존 첨부파일과 병합
+        }
+
         cardHistoryService.save(new CardHistory(savedCard, "카드가 수정되었습니다."));
 
         return mapToCardResponseDto(savedCard);
@@ -131,25 +126,6 @@ public class CardService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new NoSuchElementException("카드를 찾을 수 없습니다."));
         cardRepository.delete(card);
-    }
-
-    // S3 URL에서 파일 이름을 추출
-    private String extractFileNameFromUrl(String url) {
-        try {
-            URI uri = new URI(url);
-            String path =uri.getPath();
-
-            return Paths.get(path).getFileName().toString();
-        } catch (URISyntaxException exception) {
-            throw new IllegalArgumentException("유효하지 않은 URL입니다.");
-        }
-    }
-
-    // 파일 이름에서 확장자 추출
-    private String determineFileType(String fileName) {
-        String extension = StringUtils.getFilenameExtension(fileName);
-
-        return extension != null ? extension.toLowerCase() : "unknown";
     }
 
     // 카드 엔티티를 응답 DTO로 Mapping

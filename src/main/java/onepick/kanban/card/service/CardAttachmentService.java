@@ -76,7 +76,7 @@ public class CardAttachmentService {
                     .bucket(bucket)
                     .key(uniqueFileName)
                     .contentType(file.getContentType())
-                    .acl(ObjectCannedACL.PUBLIC_READ) // 파일을 공개적으로 읽을 수 있도록 설정
+//                    .acl(ObjectCannedACL.PUBLIC_READ) // 파일을 공개적으로 읽을 수 있도록 설정
                     .build();
 
             try {
@@ -84,6 +84,9 @@ public class CardAttachmentService {
             } catch (IOException exception) {
                 log.error("파일 업로드 중 오류가 발생했습니다: {}", exception.getMessage());
                 throw new RuntimeException("파일 업로드 중 오류가 발생했습니다.", exception);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                throw new RuntimeException(exception);
             }
 
             String fileUrl = getPublicUrl(uniqueFileName);
