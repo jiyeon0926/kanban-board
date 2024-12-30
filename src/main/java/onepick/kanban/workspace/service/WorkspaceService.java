@@ -2,15 +2,21 @@ package onepick.kanban.workspace.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import onepick.kanban.user.entity.Role;
+import onepick.kanban.user.entity.User;
+import onepick.kanban.user.repository.UserRepository;
 import onepick.kanban.workspace.dto.WorkspaceRequestDto;
 import onepick.kanban.workspace.dto.WorkspaceResponseDto;
 import onepick.kanban.workspace.entity.Workspace;
 import onepick.kanban.workspace.repository.WorkspaceRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,6 +24,7 @@ import java.util.stream.Collectors;
 public class WorkspaceService {
 
     private final WorkspaceRepository workspaceRepository;
+    private final UserRepository userRepository;
 
     public Workspace createWorkspace(String title, String contents) {
         Workspace workspace = new Workspace(title, contents);
@@ -25,7 +32,11 @@ public class WorkspaceService {
     }
 
     public List<WorkspaceResponseDto> getAllWorkspaces() {
-        return workspaceRepository.findAll().stream()
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String authEmail = auth.getName();
+        Optional<User> user = userRepository.findByEmail(authEmail);
+
+        return workspaceRepository.findWorkspacesByUserId(user.get().getId()).stream()
                 .map(workspace -> new WorkspaceResponseDto(
                         workspace.getId(),
                         workspace.getTitle(),
@@ -40,6 +51,7 @@ public class WorkspaceService {
         if (requestDto == null || requestDto.getTitle() == null || requestDto.getContents() == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "워크스페이스를 찾을 수 없습니다.");
         }
+
         workspace.update(requestDto.getTitle(), requestDto.getContents());
     }
 
@@ -52,6 +64,6 @@ public class WorkspaceService {
     }
 
     public Workspace findMemberByWorkspaceId(Long workspaceId) {
-       return workspaceRepository.findMemberByWorkspaceId(workspaceId);
+        return workspaceRepository.findMemberByWorkspaceId(workspaceId);
     }
 }
