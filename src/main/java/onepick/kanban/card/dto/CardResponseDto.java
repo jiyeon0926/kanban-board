@@ -15,7 +15,7 @@ public class CardResponseDto {
     private final String title;
     private final String contents;
     private final LocalDateTime deadline;
-    private final List<CardAttachmentDto> attachments;
+    private final List<CardAttachmentDto> attachments; // 첨부파일 DTO 리스트 추가
     private final List<CommentResponseDto> comments;
     private final List<CardHistoryDto> histories;
 }
