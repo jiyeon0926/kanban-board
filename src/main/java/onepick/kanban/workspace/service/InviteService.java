@@ -121,9 +121,9 @@ public class InviteService {
         }
     }
 
-    // 관리자가 초대 취소
+    // STAFF 관리자가 초대 취소
     @Transactional
-    public void deleteInvite(Long workspaceId, Long inviteId) {
+    public void deleteInviteByStaff(Long workspaceId, Long inviteId) {
         Invite invite = inviteRepository.findById(inviteId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 초대 ID입니다."));
 
@@ -137,9 +137,21 @@ public class InviteService {
 
         Optional<Member> member = memberService.findByWorkspaceIdAndUserId(workspaceId, inviter.get().getId());
 
-        if (member.get().getRole().equals(Role.STAFF) || inviter.get().getRole().equals(Role.ADMIN)) {
+        if (member.get().getRole().equals(Role.STAFF)) {
             inviteRepository.delete(invite);
         }
+    }
+
+    // 관리자가 초대 취소
+    public void deleteInviteByAdmin(Long workspaceId, Long inviteId) {
+        Invite invite = inviteRepository.findById(inviteId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 초대 ID입니다."));
+
+        if (!invite.getWorkspace().getId().equals(workspaceId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 워크스페이스 ID입니다.");
+        }
+
+        inviteRepository.delete(invite);
     }
 
     private Workspace getWorkspace(Long workspaceId, List<String> emails) {
