@@ -71,6 +71,10 @@ public class AdminService {
     public MemberResponseDto findMemberByWorkspaceId(Long workspaceId) {
         Workspace workspace = workspaceService.findMemberByWorkspaceId(workspaceId);
 
+        if (workspace == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "워크스페이스가 존재하지 않거나 멤버가 없습니다.");
+        }
+
         return MemberResponseDto.toDto(workspace);
     }
 }
