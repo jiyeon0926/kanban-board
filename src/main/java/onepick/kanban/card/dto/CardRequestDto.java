@@ -3,6 +3,7 @@ package onepick.kanban.card.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,5 +20,7 @@ public class CardRequestDto {
 
     private final LocalDateTime deadline;
 
-    private final List<Long> assigneeIds; // 다중 담당자 ID 추가
+    private final List<Long> assigneeIds; // 다중 담당자 ID
+
+    private List<String> attachmentUrls; // 첨부파일 URL 리스트
 }
