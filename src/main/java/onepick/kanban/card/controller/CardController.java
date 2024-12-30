@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CardController {
 
     private final CardService cardService;
-    private final CardRepository cardRepository;
 
     // 카드 생성
     @PostMapping
@@ -49,7 +48,7 @@ public class CardController {
     // 카드 수정
     @PutMapping("/{cardId}")
     public ResponseEntity<CardResponseDto> updateCard(@PathVariable Long cardId,
-                                                      @RequestBody CardRequestDto requestDto) {
+                                                      @Valid @RequestBody CardRequestDto requestDto) {
         CardResponseDto card = cardService.updateCard(cardId, requestDto);
 
         return ResponseEntity.ok(card);
