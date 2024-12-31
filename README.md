@@ -247,7 +247,7 @@
   
 ------------
 ## 시연 영상
-### [ONE pick의 Mozzarello 시연 영상](https://www.youtube.com/watch?v=jTAvD7emVVs&feature=youtu.be)
+### [ONE pick의 Mozzarello 시연 영상](https://youtu.be/JC8Yg2y1avA)
 
 ------------
 ## 팀원 👥
