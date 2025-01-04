@@ -254,7 +254,7 @@
 
  |  |이름|역할|MBTI|Github|블로그|
  |------|------|------|------|------|------|
- |![2-276-2-324](https://github.com/user-attachments/assets/9e4bdcb9-f632-44f2-bce4-60680135079a)|김지연 |팀원|ISFP|[jiyeon0926](https://github.com/jiyeon0926))|[velog](https://velog.io/@yeoni9094/posts)|
+ |![2-276-2-324](https://github.com/user-attachments/assets/9e4bdcb9-f632-44f2-bce4-60680135079a)|김지연 |팀원|ISFP|[jiyeon0926](https://github.com/jiyeon0926)|[velog](https://velog.io/@yeoni9094/posts)|
  |![2-273-39-321](https://github.com/user-attachments/assets/cd4a49c9-4521-4702-b14f-e17ad7ad22c1)|장은영 |팀원|ESTJ|[eunyounging](https://github.com/eunyounging)|[tistory](https://write7551.tistory.com/)|
  |![2-269-61-313](https://github.com/user-attachments/assets/0262182a-412c-4a80-bccb-cd2f6d46071c)|김휘웅 |팀장|INTJ|[hwiung](https://github.com/hwiung)|[tistory](https://khu2172.tistory.com/)|
  |![2-274-2-322](https://github.com/user-attachments/assets/40501b7e-8e20-4b04-a129-650dbba3d7e9)|허수연 |팀원|INTJ|[sooyeoneo](https://github.com/sooyeoneo)|[tistory](https://sooyeoneo.tistory.com/)|
